@@ -1,37 +1,37 @@
 export const resources = [
   {
-    title: "SEA Maths – Understanding Fractions",
+    title: "SEA Maths – Section 2 Questions",
     type: "video",
     category: "SEA",
     description:
-      "Learn how to break down fractions step by step using simple methods.",
-    link: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
+      "Watch A's Online Tutor, Mr Andre Burton, go through questions for Elite Tutoring Services SEA Practice Boolet #3 2023.",
+    link: "https://www.youtube.com/watch?v=JTjSQWM-5Vo",
   },
   {
-    title: "SEA Fractions Practice Worksheet",
+    title: "A's Online SEA Mathematics Practice Test#1 (2021)",
     type: "pdf",
     category: "SEA",
     description:
-      "Practice questions designed to improve understanding and speed.",
-    viewLink: "/resources/sea-fractions-practice-worksheet.pdf",
-    downloadLink: "/resources/sea-fractions-practice-worksheet.pdf",
+      "Free SEA Mathematics Practice test for students preparing for Secondary Entrance Assesment Exams",
+    viewLink: "/resources/SEA Practice (A's Online) - Mathematics 1.pdf",
+    downloadLink: "/resources/SEA Practice (A's Online) - Mathematics 1.pdf",
   },
   {
-    title: "CSEC Algebra – Solving Linear Equations",
+    title: "CSEC Angle Construction – Drawing a 60 degree angle",
     type: "video",
     category: "CSEC",
     description:
-      "A guided walkthrough for solving linear equations clearly and confidently.",
-    link: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
+      "Watch A's Online Tutor, Mr Andre Burton, go through step by step how to construct a 60 degree angle with only a pencil, ruler and a compass.",
+    link: "https://www.youtube.com/watch?v=PbHFdow0bVE",
   },
   {
-    title: "CSEC Algebra Practice Sheet",
+    title: "Integers Intro - Addition",
     type: "pdf",
     category: "CSEC",
     description:
-      "Extra algebra practice to build confidence and improve exam readiness.",
-    viewLink: "/resources/csec-algebra-practice-sheet.pdf",
-    downloadLink: "/resources/csec-algebra-practice-sheet.pdf",
+      "Short practice exercise on adding integers.",
+    viewLink: "/resources/Addition Integers Practice 1.pdf",
+    downloadLink: "/resources/Addition Integers Practice 1.pdf",
   },
   {
     title: "AI Basics for Students",
@@ -42,7 +42,7 @@ export const resources = [
     link: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
   },
   {
-    title: "Digital Readiness Checklist",
+    title: "Student Tech Readiness Checklist",
     type: "pdf",
     category: "AI & Computer Skills",
     description:
