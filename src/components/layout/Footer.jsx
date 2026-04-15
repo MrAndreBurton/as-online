@@ -7,6 +7,7 @@ const navigation = [
   { name: "Courses", path: "/courses" },
   { name: "Resources", path: "/resources" },
   { name: "Contact", path: "/contact" },
+  { name: "CountMeInTT", path: "/countmeintt", featured: true },
 ];
 
 export default function Footer() {
@@ -16,7 +17,8 @@ export default function Footer() {
         <div>
           <h3 className="text-lg font-semibold text-white">A&apos;s Online</h3>
           <p className="mt-3 max-w-md text-sm leading-7 text-slate-400">
-            Personalised learning support in mathematics and digital skills with a modern, student-focused approach.
+            Personalised learning support in mathematics and digital skills with
+            a modern, student-focused approach.
           </p>
         </div>
 
@@ -29,7 +31,11 @@ export default function Footer() {
               <Link
                 key={item.name}
                 to={item.path}
-                className="transition hover:text-sky-300"
+                className={
+                  item.featured
+                    ? "font-semibold text-yellow-300 transition hover:text-yellow-200"
+                    : "transition hover:text-sky-300"
+                }
               >
                 {item.name}
               </Link>
@@ -39,10 +45,10 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-white/10 px-6 py-4 text-center text-sm text-slate-500 lg:px-8">
-        © {new Date().getFullYear()} A&apos;s Online Tutoring Services. All rights reserved.
+        © {new Date().getFullYear()} A&apos;s Online Tutoring Services. All
+        rights reserved.
       </div>
     </footer>
   );
 }
-
 

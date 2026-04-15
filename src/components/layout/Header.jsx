@@ -9,6 +9,7 @@ const navigation = [
   { name: "Courses", path: "/courses" },
   { name: "Resources", path: "/resources" },
   { name: "Contact", path: "/contact" },
+  { name: "CountMeInTT", path: "/countmeintt", featured: true },
 ];
 
 export default function Header() {
@@ -50,7 +51,11 @@ export default function Header() {
               <Link
                 key={item.name}
                 to={item.path}
-                className="text-sm text-slate-200 transition hover:text-sky-300"
+                className={
+                  item.featured
+                    ? "text-sm font-semibold text-yellow-300 transition hover:text-yellow-200"
+                    : "text-sm text-slate-200 transition hover:text-sky-300"
+                }
               >
                 {item.name}
               </Link>
@@ -65,7 +70,11 @@ export default function Header() {
                 key={item.name}
                 to={item.path}
                 onClick={() => setMenuOpen(false)}
-                className="rounded-xl px-4 py-3 text-sm text-slate-200 transition hover:bg-white/5 hover:text-sky-300"
+                className={
+                  item.featured
+                    ? "rounded-xl px-4 py-3 text-sm font-semibold text-yellow-300 transition hover:bg-yellow-400/10 hover:text-yellow-200"
+                    : "rounded-xl px-4 py-3 text-sm text-slate-200 transition hover:bg-white/5 hover:text-sky-300"
+                }
               >
                 {item.name}
               </Link>
@@ -76,5 +85,4 @@ export default function Header() {
     </header>
   );
 }
-
 

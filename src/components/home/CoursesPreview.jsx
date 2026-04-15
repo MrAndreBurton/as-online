@@ -26,7 +26,7 @@ const courses = [
     link: "/courses",
   },
   {
-    title: "AI & Computer Skills",
+    title: "AI & Digital Readiness",
     description:
       "Practical digital skills courses designed to prepare students for a changing world.",
     link: "/courses/ai-digital-readiness",

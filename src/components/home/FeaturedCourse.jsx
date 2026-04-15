@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const featuredVideo = "https://www.youtube.com/embed/4JESXtQy2tQ";
+const featuredVideo = "https://www.youtube.com/embed/st-unhiZF34";
 const registrationLink =
   "https://docs.google.com/forms/d/e/1FAIpQLSduZj2qI01suyHDZN7TixWnPE83NMuFB4SkpgRmedWNKCWYJw/viewform?usp=header";
 
@@ -15,7 +15,7 @@ export default function FeaturedCourse() {
               <div>
                 <p className="text-sm text-sky-300">Featured Course</p>
                 <h2 className="mt-2 text-2xl font-semibold text-white">
-                  AI &amp; Computer Skills
+                  AI &amp; Digital Readiness
                 </h2>
               </div>
               <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-300">
@@ -28,7 +28,7 @@ export default function FeaturedCourse() {
                 <iframe
                   className="h-full w-full"
                   src={featuredVideo}
-                  title="AI and Computer Skills Course"
+                  title="AI and Digital Readiness Course"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   referrerPolicy="strict-origin-when-cross-origin"
                   allowFullScreen
