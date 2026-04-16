@@ -30,7 +30,7 @@ const socialLinks = [
   {
     label: "YouTube",
     handle: "Get Your Education",
-    href: "www.youtube.com/@getyoureducation960",
+    href: "https://youtube.com/@getyoureducation960?si=CClN1wzoP8EI_mWv",
   },
 ];
 

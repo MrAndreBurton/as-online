@@ -238,7 +238,7 @@ export const countMeInSocialLinks = [
   {
     label: "YouTube",
     handle: "Get Your Education",
-    href: "https://www.youtube.com/@GetYourEducation",
+    href: "https://youtube.com/@getyoureducation960?si=CClN1wzoP8EI_mWv",
   },
 ];
 
