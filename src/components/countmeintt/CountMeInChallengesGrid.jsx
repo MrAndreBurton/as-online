@@ -47,11 +47,13 @@ export default function CountMeInChallengesGrid() {
 
                 <div className="mt-6 flex flex-wrap gap-3">
                   <a
-                    href={challenge.detailsLink}
-                    className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.02]"
-                  >
-                    View Details
-                  </a>
+  href={challenge.flyer}
+  target="_blank"
+  rel="noreferrer"
+  className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.02]"
+>
+  View Flyer
+</a>
                   <a
                     href={challenge.joinLink}
                     target="_blank"

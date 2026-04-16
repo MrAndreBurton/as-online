@@ -34,12 +34,12 @@ export const resources = [
     downloadLink: "/resources/Addition Integers Practice 1.pdf",
   },
   {
-    title: "AI Basics for Students",
+    title: "AI Best Practices for Students",
     type: "video",
     category: "AI & Computer Skills",
     description:
-      "A simple introduction to AI, how it works, and how students can use it responsibly.",
-    link: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
+      "After working with students over the past three years, A's Online Tutor Mr Andre shares best practices for students in the AI age.",
+    link: "https://www.tiktok.com/@getyoureducation/video/7605372641125403922",
   },
   {
     title: "Student Tech Readiness Checklist",

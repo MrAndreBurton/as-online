@@ -47,6 +47,7 @@ export default function Footer() {
       <div className="border-t border-white/10 px-6 py-4 text-center text-sm text-slate-500 lg:px-8">
         © {new Date().getFullYear()} A&apos;s Online Tutoring Services. All
         rights reserved.
+        This website was designed and created by A's Online.
       </div>
     </footer>
   );

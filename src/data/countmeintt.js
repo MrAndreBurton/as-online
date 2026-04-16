@@ -71,8 +71,7 @@ export const currentChallenges = [
     description:
       "Be one of the first five players for the month to complete the 5×5 grid in under 20 seconds and get a chance to win.",
     flyer: "/images/countmeintt/challenges/beat-20-seconds.png",
-    videoLink: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
-    detailsLink: "/countmeintt",
+    videoLink: "https://www.youtube.com/embed/0szIJRTHjds",
     joinLink: "https://www.countmeintt.com",
   },
 ];
