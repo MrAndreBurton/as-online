@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://asonlinetutor.com/sitemap.xml
+
+
