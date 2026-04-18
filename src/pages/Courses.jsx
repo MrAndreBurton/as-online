@@ -1,5 +1,6 @@
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
+import { Helmet } from "react-helmet-async";
 
 const registrationLink =
   "https://docs.google.com/forms/d/e/1FAIpQLSduZj2qI01suyHDZN7TixWnPE83NMuFB4SkpgRmedWNKCWYJw/viewform?usp=header";
@@ -63,6 +64,19 @@ const aiHighlights = [
 export default function Courses() {
   return (
     <div className="min-h-screen bg-slate-950 text-white">
+      <Helmet>
+  <title>Courses | A's Online Tutoring Services</title>
+  <meta
+    name="description"
+    content="Explore mathematics, AI, and digital skills courses designed to help students grow in confidence, skill, and future readiness."
+  />
+  <meta property="og:title" content="Courses | A's Online Tutoring Services" />
+  <meta
+    property="og:description"
+    content="Explore mathematics, AI, and digital skills courses designed to help students grow in confidence, skill, and future readiness."
+  />
+</Helmet>
+
       <Header />
 
       <main>

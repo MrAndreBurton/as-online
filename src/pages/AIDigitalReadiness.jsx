@@ -1,5 +1,6 @@
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
+import { Helmet } from "react-helmet-async";
 
 const registrationLink =
   "https://docs.google.com/forms/d/e/1FAIpQLSduZj2qI01suyHDZN7TixWnPE83NMuFB4SkpgRmedWNKCWYJw/viewform?usp=header";
@@ -68,6 +69,22 @@ const strengths = [
 export default function AIDigitalReadiness() {
   return (
     <div className="min-h-screen bg-slate-950 text-white">
+      <Helmet>
+  <title>Future Skills: AI & Digital Readiness for Form 1 Students | A's Online</title>
+  <meta
+    name="description"
+    content="A 3-month small-group programme helping students enter Form 1 confident, organised, and ready to use technology and AI for school."
+  />
+  <meta
+    property="og:title"
+    content="Future Skills: AI & Digital Readiness for Form 1 Students | A's Online"
+  />
+  <meta
+    property="og:description"
+    content="A 3-month small-group programme helping students enter Form 1 confident, organised, and ready to use technology and AI for school."
+  />
+</Helmet>
+
       <Header />
 
       <main>

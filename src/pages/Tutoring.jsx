@@ -1,5 +1,6 @@
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
+import { Helmet } from "react-helmet-async";
 
 const registrationLink =
   "https://docs.google.com/forms/d/e/1FAIpQLSduZj2qI01suyHDZN7TixWnPE83NMuFB4SkpgRmedWNKCWYJw/viewform?usp=header";
@@ -98,6 +99,19 @@ const pricingPlans = [
 export default function Tutoring() {
   return (
     <div className="min-h-screen bg-slate-950 text-white">
+      <Helmet>
+  <title>One-on-One Mathematics Tutoring | A's Online</title>
+  <meta
+    name="description"
+    content="Personalised online mathematics tutoring for Standard 3 to CSEC students, designed to improve understanding, confidence, speed, and exam performance. SEA preparation and CSEC Mathematics."
+  />
+  <meta property="og:title" content="One-on-One Mathematics Tutoring | A's Online" />
+  <meta
+    property="og:description"
+    content="Personalised online mathematics tutoring (lessons) for Standard 3 to CSEC students, designed to improve understanding, confidence, speed, and exam performance. SEA preparation and CSEC Mathematics."
+  />
+</Helmet>
+
       <Header />
 
       <main>

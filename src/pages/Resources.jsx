@@ -2,6 +2,7 @@ import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
 import ResourceCategorySection from "../components/resources/ResourceCategorySection";
 import { resources } from "../data/resources";
+import { Helmet } from "react-helmet-async";
 
 export default function Resources() {
   const seaResources = resources.filter((item) => item.category === "SEA");
@@ -12,6 +13,19 @@ export default function Resources() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
+      <Helmet>
+  <title>Free Resources | A's Online Tutoring Services</title>
+  <meta
+    name="description"
+    content="Explore free notes, videos, worksheets, and learning tools to help students improve in Mathematics and build stronger learning habits."
+  />
+  <meta property="og:title" content="Free Resources | A's Online Tutoring Services" />
+  <meta
+    property="og:description"
+    content="Explore free notes, videos, worksheets, and learning tools to help students improve in Mathematics and build stronger learning habits."
+  />
+</Helmet>
+
       <Header />
 
       <main className="mx-auto max-w-7xl px-6 py-20 lg:px-8 lg:py-24">

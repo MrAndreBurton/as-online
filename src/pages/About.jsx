@@ -1,5 +1,6 @@
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
+import { Helmet } from "react-helmet-async";
 
 const impactStats = [
   { value: "90+", label: "Students taught one-on-one" },
@@ -39,6 +40,19 @@ const trustPoints = [
 export default function About() {
   return (
     <div className="min-h-screen bg-slate-950 text-white">
+      <Helmet>
+  <title>About | A's Online Tutoring Services</title>
+  <meta
+    name="description"
+    content="Learn more about Andre Burton, A's Online Tutoring Services, and the teaching approach helping students build confidence and results in Mathematics at the SEA and CSEC levels (primary and secondary schools)."
+  />
+  <meta property="og:title" content="About | A's Online Tutoring Services" />
+  <meta
+    property="og:description"
+    content="Learn more about Andre Burton, A's Online Tutoring Services, and the teaching approach helping students build confidence and results in Mathematics at the SEA and CSEC levels (primary and secondary schools)."
+  />
+</Helmet>
+
       <Header />
 
       <main>

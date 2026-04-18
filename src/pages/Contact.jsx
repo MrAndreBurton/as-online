@@ -1,5 +1,6 @@
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
+import { Helmet } from "react-helmet-async";
 
 const registrationLink =
   "https://docs.google.com/forms/d/e/1FAIpQLSduZj2qI01suyHDZN7TixWnPE83NMuFB4SkpgRmedWNKCWYJw/viewform?usp=header";
@@ -37,6 +38,19 @@ const socialLinks = [
 export default function Contact() {
   return (
     <div className="min-h-screen bg-slate-950 text-white">
+      <Helmet>
+  <title>Contact | A's Online Tutoring Services</title>
+  <meta
+    name="description"
+    content="Get in touch with A's Online Tutoring Services for tutoring, courses, and learning support in Mathematics (primary school, secondary school and CSEC repeaters) and digital skills."
+  />
+  <meta property="og:title" content="Contact | A's Online Tutoring Services" />
+  <meta
+    property="og:description"
+    content="Get in touch with A's Online Tutoring Services for tutoring, courses, and learning support in Mathematics (primary school, secondary school and CSEC repeaters) and digital skills."
+  />
+</Helmet>
+
       <Header />
 
       <main>
