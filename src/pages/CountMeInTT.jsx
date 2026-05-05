@@ -9,6 +9,7 @@ import CountMeInPartners from "../components/countmeintt/CountMeInPartners";
 import CountMeInFeaturedChallenge from "../components/countmeintt/CountMeInFeaturedChallenge";
 import CountMeInChallengesGrid from "../components/countmeintt/CountMeInChallengesGrid";
 import CountMeInEvents from "../components/countmeintt/CountMeInEvents";
+import CountMeInPastEvents from "../components/countmeintt/CountMeInPastEvents";
 import CountMeInHowToUse from "../components/countmeintt/CountMeInHowToUse";
 import CountMeInResources from "../components/countmeintt/CountMeInResources";
 import CountMeInSchools from "../components/countmeintt/CountMeInSchools";
@@ -47,6 +48,7 @@ export default function CountMeInTT() {
         <CountMeInFeaturedChallenge />
         <CountMeInChallengesGrid />
         <CountMeInEvents />
+        <CountMeInPastEvents />
         <CountMeInHowToUse />
         <CountMeInResources />
         <CountMeInSchools />

@@ -41,44 +41,55 @@ export default function About() {
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <Helmet>
-  <title>About | A's Online Tutoring Services</title>
-  <meta
-    name="description"
-    content="Learn more about Andre Burton, A's Online Tutoring Services, and the teaching approach helping students build confidence and results in Mathematics at the SEA and CSEC levels (primary and secondary schools)."
-  />
-  <meta property="og:title" content="About | A's Online Tutoring Services" />
-  <meta
-    property="og:description"
-    content="Learn more about Andre Burton, A's Online Tutoring Services, and the teaching approach helping students build confidence and results in Mathematics at the SEA and CSEC levels (primary and secondary schools)."
-  />
-</Helmet>
+        <title>About | A&apos;s Online Tutoring Services</title>
+        <meta
+          name="description"
+          content="Learn more about Andre Burton, A's Online Tutoring Services, and the teaching approach helping students build confidence and results in Mathematics at the SEA and CSEC levels."
+        />
+        <meta property="og:title" content="About | A's Online Tutoring Services" />
+        <meta
+          property="og:description"
+          content="Learn more about Andre Burton, A's Online Tutoring Services, and the teaching approach helping students build confidence and results in Mathematics at the SEA and CSEC levels."
+        />
+      </Helmet>
 
       <Header />
 
       <main>
         <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8 lg:py-24">
           <div className="rounded-[2rem] border border-white/10 bg-white/5 p-8 shadow-2xl shadow-black/20 backdrop-blur lg:p-12">
-            <div className="max-w-4xl">
-              <p className="text-sm uppercase tracking-[0.3em] text-sky-300">
-                About A&apos;s Online
-              </p>
+            <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+              <div>
+                <p className="text-sm uppercase tracking-[0.3em] text-sky-300">
+                  About A&apos;s Online
+                </p>
 
-              <h1 className="mt-4 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
-                Built to help more students understand Mathematics and succeed.
-              </h1>
+                <h1 className="mt-4 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
+                  Built to help more students understand Mathematics and succeed.
+                </h1>
 
-              <p className="mt-8 max-w-3xl text-lg leading-8 text-slate-300">
-                For more than 20 years, over 50% of students have struggled to
-                pass Mathematics at both SEA and CSEC levels in Trinidad and
-                Tobago.
-              </p>
+                <p className="mt-8 max-w-3xl text-lg leading-8 text-slate-300">
+                  For more than 20 years, over 50% of students have struggled to
+                  pass Mathematics at both SEA and CSEC levels in Trinidad and
+                  Tobago.
+                </p>
 
-              <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">
-                That&apos;s not just a statistic—it represents thousands of
-                students being left behind every year. A&apos;s Online was built
-                to change that by giving students the tools, understanding, and
-                confidence they need to move forward.
-              </p>
+                <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">
+                  That&apos;s not just a statistic—it represents thousands of
+                  students being left behind every year. A&apos;s Online was built
+                  to change that by giving students the tools, understanding, and
+                  confidence they need to move forward.
+                </p>
+              </div>
+
+              <div className="overflow-hidden rounded-[1.5rem] border border-white/10 bg-slate-900/60 shadow-2xl shadow-black/30">
+                <img
+                  src="/images/about/andre-teaching-main.webp"
+                  alt="Andre Burton teaching Mathematics"
+                  className="h-full w-full object-cover"
+                  loading="eager"
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -108,9 +119,9 @@ export default function About() {
 
             <div className="mt-8 space-y-6 text-base leading-8 text-slate-300">
               <p>
-                My name is Andre Burton. I&apos;ve been teaching Mathematics
-                since I was a student myself—helping classmates understand
-                concepts that never quite clicked in the classroom.
+                My name is Andre Burton. I&apos;ve been teaching Mathematics since
+                I was a student myself—helping classmates understand concepts
+                that never quite clicked in the classroom.
               </p>
               <p>
                 What started as helping a few friends grew into something much
@@ -118,15 +129,24 @@ export default function About() {
                 primary, secondary, and even adult learners preparing for exams.
               </p>
               <p>
-                In 2019, I officially launched A&apos;s Online Tutoring
-                Services. When the world shifted online, I was already ready—and
-                that made it possible to reach and help even more students
-                across Trinidad and Tobago.
+                In 2019, I officially launched A&apos;s Online Tutoring Services.
+                When the world shifted online, I was already ready—and that made
+                it possible to reach and help even more students across Trinidad
+                and Tobago.
               </p>
               <p>
                 Students move from “I don&apos;t like Maths” to “I actually love
                 Maths.” That shift in confidence is where real success begins.
               </p>
+            </div>
+
+            <div className="mt-8 overflow-hidden rounded-2xl border border-white/10 bg-slate-900/60">
+              <img
+                src="/images/about/andre-teaching-session.webp"
+                alt="Andre Burton working with a student during a Mathematics lesson"
+                className="h-full w-full object-cover"
+                loading="lazy"
+              />
             </div>
           </div>
 
@@ -144,8 +164,8 @@ export default function About() {
                 communicate.
               </p>
               <p>
-                Too often, students are taught to memorize instead of
-                understand—and that is where the problem starts.
+                Too often, students are taught to memorize instead of understand—and
+                that is where the problem starts.
               </p>
               <p>
                 I tell my students all the time: do not say “I can&apos;t” or “I
@@ -218,35 +238,30 @@ export default function About() {
               <p>
                 A’s Online is not just tutoring. It is not only about passing
                 exams. It is a system built around structure, creativity, and
-                modern tools that keep students engaged while building real
-                skill.
+                modern tools that keep students engaged while building real skill.
               </p>
-
               <p>
                 My approach focuses on building confidence in what students
                 already know and helping them realise they are capable of more.
               </p>
-
               <p>
                 I take time to connect with each student—understanding how they
-                think, what they struggle with, and what matters to them—so I
-                can teach in a way that actually makes sense to them. Every
-                session is tailored to the individual, not just to cover
-                content, but to build confidence and curiosity.
+                think, what they struggle with, and what matters to them—so I can
+                teach in a way that actually makes sense to them. Every session
+                is tailored to the individual, not just to cover content, but to
+                build confidence and curiosity.
               </p>
-
               <p>
                 With tools like CountMeInTT and other interactive resources,
-                learning becomes engaging, structured, and modern. The goal is
-                to move students from “I don’t like Maths” to “I actually enjoy
+                learning becomes engaging, structured, and modern. The goal is to
+                move students from “I don’t like Maths” to “I actually enjoy
                 learning.”
               </p>
-
               <p>
                 I always remind my students that Mathematics is not just about
                 numbers—it is about training your mind to think through problems
-                and find solutions. That is a skill they will use for the rest
-                of their lives.
+                and find solutions. That is a skill they will use for the rest of
+                their lives.
               </p>
             </div>
 
@@ -326,7 +341,7 @@ export default function About() {
         <section className="mx-auto max-w-7xl px-6 pb-24 lg:px-8">
           <div className="rounded-[2rem] border border-white/10 bg-sky-500/10 p-8 shadow-2xl shadow-black/20 backdrop-blur lg:p-12">
             <p className="text-sm uppercase tracking-[0.3em] text-sky-300">
-              note from andre
+              Note from Andre
             </p>
             <h2 className="mt-4 max-w-3xl text-3xl font-semibold tracking-tight text-white lg:text-4xl">
               If your child is struggling with Mathematics—or can benefit from
@@ -343,5 +358,4 @@ export default function About() {
     </div>
   );
 }
-
 

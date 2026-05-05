@@ -67,7 +67,7 @@ export const featuredChallenge = {
 
 export const currentChallenges = [
   {
-    title: "Barbershop Challenge Apr - Jun 2026",
+    title: "Barbershop Challenge Jul - Sep 2026",
     description:
       "Be one of the first five players for the month to complete the 5×5 grid in under 20 seconds and get a chance to win.",
     flyer: "/images/countmeintt/challenges/beat-20-seconds.png",
@@ -81,10 +81,31 @@ export const pastChallenges = [
     title: "September Month End Challenge",
     description:
       "September 2025 was the launch of the platform. Students from across Trinidad and Tobago competed to win prizes from RIK Services Ltd. Trinidad Bookworld.",
-    flyer: "/images/countmeintt/challenges/september-month-end.png",
+    image: "/images/countmeintt/challenges/september-month-end.png",
     winnersImage: "/images/countmeintt/winners/september-month-end-winners.png",
     winners: ["Priya", "Shazad", "Samuel"],
   },
+{
+  title: "Bocas Lit Fest 5×5 Challenge",
+  description:
+    "At Bocas Lit Fest 2026, students completed live the 5×5 grid, with several players returning multiple times to improve their scores.",
+  image: "/images/countmeintt/challenges/bocas-challenge.jpg",   
+highlights: [
+    "33 live 5×5 attempts",
+    "Repeat players improved their times",
+    "Top players showed strong competitive engagement",
+  ],
+  winnersTitle: "Fastest Times Under 30 Seconds",
+  winners: [
+    "PRINCE — 00:14.94",
+    "MATTHEW — 00:21.34",
+    "ZURIEL — 00:24.60",
+    "JORDAN — 00:27.07",
+    "XAVI — 00:28.76",
+  ],
+  buttonText: "View Hall of Fame",
+  buttonLink: "#",
+},
 ];
 
 export const countMeInHowToUse = [
@@ -192,7 +213,7 @@ export const countMeInPartners = [
   },
   {
     name: "Bocas Lit Fest 2026",
-    note: "CountMeInTT is an official Children's Activity at Bocas Lit Fest 2026",
+    note: "CountMeInTT was featured as an official Children's Activity at Bocas Lit Fest 2026",
   },
   {
     name: "Private Donors",
@@ -202,12 +223,25 @@ export const countMeInPartners = [
 
 export const countMeInUpcomingEvents = [
   {
-    title: "Count Me In TT Multiplication Challenge",
-    organisation: "Bocas Lit Fest Festival",
-    date: "Saturday 2nd May 2026",
+    title: "CountMeInTT Public Launch",
+    organisation: "A’s Online Tutoring Services",
+    date: "Coming soon",
     description:
-      "Join the challenge live and experience CountMeInTT in action at the festival.",
-    link: "https://www.bocaslitfest.com/events/countmeintt-multiplication-challenge/",
+      "The official public launch of CountMeInTT is coming soon. Stay tuned for details on the date, venue, activities, and how students, parents, teachers, and sponsors can get involved.",
+    link: "/contact",
+    buttonText: "Stay Tuned",
+  },
+];
+
+export const countMeInPastEvents = [
+  {
+    title: "Bocas Lit Fest Children’s Festival 2026",
+    organisation: "Bocas Lit Fest",
+    date: "2026",
+    description:
+      "CountMeInTT was featured at the Bocas Lit Fest Children’s Festival, giving students the chance to take on the 5×5 multiplication challenge live. The event showed how quickly students engage with the game, return to improve their times, and enjoy practicing Mathematics through competition.",
+    link: "https://www.countmeintt.com/bocaslitfest2026",
+    buttonText: "View Event Results",
   },
 ];
 

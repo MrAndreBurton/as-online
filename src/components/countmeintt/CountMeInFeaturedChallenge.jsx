@@ -15,7 +15,7 @@ export default function CountMeInFeaturedChallenge() {
                 </h2>
               </div>
               <span className="rounded-full border border-amber-400/20 bg-amber-400/10 px-3 py-1 text-xs font-medium text-amber-300">
-                Challenge Live
+                Live July 2026
               </span>
             </div>
 
@@ -42,8 +42,9 @@ export default function CountMeInFeaturedChallenge() {
                   rel="noreferrer"
                   className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950 transition hover:opacity-90"
                 >
-                  Play Now
+                  Practice Now
                 </a>
+                {/*
                 <a
                   href={featuredChallenge.joinLink}
                   target="_blank"
@@ -52,6 +53,7 @@ export default function CountMeInFeaturedChallenge() {
                 >
                   Join the Challenge
                 </a>
+                */}
               </div>
             </div>
           </div>

@@ -12,13 +12,14 @@ export default function CountMeInChallengesGrid() {
         </h2>
       </div>
 
+      {/* UPCOMING CHALLENGES */}
       <div className="mb-16">
         <div className="mb-8 max-w-3xl">
           <p className="text-sm uppercase tracking-[0.3em] text-amber-300">
-            Current Challenges
+            Upcoming Challenges
           </p>
           <h3 className="mt-4 text-2xl font-semibold tracking-tight text-white lg:text-3xl">
-            Active opportunities for students to join and compete.
+            Upcoming opportunities for students to join and compete.
           </h3>
         </div>
 
@@ -28,40 +29,48 @@ export default function CountMeInChallengesGrid() {
               key={challenge.title}
               className="overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/5 shadow-xl shadow-black/10 backdrop-blur"
             >
-              <div className="aspect-[4/3] overflow-hidden bg-slate-900/60">
-                <img
-                  src={challenge.flyer}
-                  alt={challenge.title}
-                  className="h-full w-full object-cover"
-                  loading="lazy"
-                />
-              </div>
+              {challenge.flyer ? (
+                <div className="aspect-[4/3] overflow-hidden bg-slate-900/60">
+                  <img
+                    src={challenge.flyer}
+                    alt={challenge.title}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              ) : null}
 
               <div className="p-6">
                 <h4 className="text-xl font-semibold text-white">
                   {challenge.title}
                 </h4>
+
                 <p className="mt-3 text-sm leading-7 text-slate-300">
                   {challenge.description}
                 </p>
 
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <a
-  href={challenge.flyer}
-  target="_blank"
-  rel="noreferrer"
-  className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.02]"
->
-  View Flyer
-</a>
-                  <a
-                    href={challenge.joinLink}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
-                  >
-                    Join Challenge
-                  </a>
+                  {challenge.flyer ? (
+                    <a
+                      href={challenge.flyer}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.02]"
+                    >
+                      View Flyer
+                    </a>
+                  ) : null}
+
+                  {challenge.joinLink ? (
+                    <a
+                      href={challenge.joinLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                    >
+                      Practice Challenge
+                    </a>
+                  ) : null}
                 </div>
 
                 {challenge.videoLink ? (
@@ -80,6 +89,7 @@ export default function CountMeInChallengesGrid() {
         </div>
       </div>
 
+      {/* PAST CHALLENGES */}
       <div>
         <div className="mb-8 max-w-3xl">
           <p className="text-sm uppercase tracking-[0.3em] text-slate-300">
@@ -97,22 +107,38 @@ export default function CountMeInChallengesGrid() {
               className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 shadow-2xl shadow-black/20 backdrop-blur"
             >
               <div className="grid gap-0 lg:grid-cols-2">
-                <div className="aspect-[4/3] overflow-hidden bg-slate-900/60">
-                  <img
-                    src={challenge.flyer}
-                    alt={challenge.title}
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                  />
-                </div>
+                {challenge.image ? (
+                  <div className="aspect-[4/3] overflow-hidden bg-slate-900/60">
+                    <img
+                      src={challenge.image}
+                      alt={challenge.title}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                ) : null}
 
                 <div className="p-6">
                   <h4 className="text-2xl font-semibold text-white">
                     {challenge.title}
                   </h4>
+
                   <p className="mt-3 text-sm leading-7 text-slate-300">
                     {challenge.description}
                   </p>
+
+                  {challenge.highlights?.length ? (
+                    <div className="mt-5 grid gap-3">
+                      {challenge.highlights.map((item) => (
+                        <div
+                          key={item}
+                          className="rounded-2xl border border-white/10 bg-slate-900/60 p-3 text-sm text-slate-200"
+                        >
+                          {item}
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
 
                   {challenge.winnersImage ? (
                     <div className="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-slate-900/60">
@@ -128,8 +154,9 @@ export default function CountMeInChallengesGrid() {
                   {challenge.winners?.length ? (
                     <div className="mt-6">
                       <p className="text-sm uppercase tracking-[0.25em] text-sky-300">
-                        Winners
+                        {challenge.winnersTitle || "Winners"}
                       </p>
+
                       <div className="mt-3 grid gap-3">
                         {challenge.winners.map((winner) => (
                           <div
@@ -142,6 +169,27 @@ export default function CountMeInChallengesGrid() {
                       </div>
                     </div>
                   ) : null}
+
+                  {challenge.buttonText && challenge.buttonLink ? (
+                    <div className="mt-6">
+                      <a
+                        href={challenge.buttonLink}
+                        target={
+                          challenge.buttonLink.startsWith("http")
+                            ? "_blank"
+                            : "_self"
+                        }
+                        rel={
+                          challenge.buttonLink.startsWith("http")
+                            ? "noreferrer"
+                            : undefined
+                        }
+                        className="inline-flex rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.02]"
+                      >
+                        {challenge.buttonText}
+                      </a>
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -151,4 +199,5 @@ export default function CountMeInChallengesGrid() {
     </section>
   );
 }
+
 
