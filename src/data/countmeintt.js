@@ -104,7 +104,7 @@ highlights: [
     "XAVI — 00:28.76",
   ],
   buttonText: "View Hall of Fame",
-  buttonLink: "#",
+  buttonLink: "https://www.countmeintt.com/bocas-hall-of-fame",
 },
 ];
 
