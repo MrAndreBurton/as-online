@@ -43,6 +43,16 @@ const courses = [
     accent: "border-rose-400/20 bg-rose-500/10",
   },
   {
+    title: "Practical AI for Adults",
+    description:
+      "A 4-week practical in-person course for adults who want to use AI more confidently for work, productivity, and everyday tasks.",
+    buttonLabel: "Learn More",
+    buttonHref: "/courses/practical-ai-for-adults",
+    buttonTarget: "_self",
+    accent: "border-yellow-400/30 bg-yellow-400/10",
+    new: true,
+  },
+  {
     title: "Future Skills: AI & Digital Readiness for Form 1 Students",
     description:
       "A 3-month small-group programme designed to help students enter Form 1 confident, organised, and ready to use technology and AI for school.",
@@ -65,17 +75,20 @@ export default function Courses() {
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <Helmet>
-  <title>Courses | A's Online Tutoring Services</title>
-  <meta
-    name="description"
-    content="Explore mathematics, AI, and digital skills courses designed to help students grow in confidence, skill, and future readiness."
-  />
-  <meta property="og:title" content="Courses | A's Online Tutoring Services" />
-  <meta
-    property="og:description"
-    content="Explore mathematics, AI, and digital skills courses designed to help students grow in confidence, skill, and future readiness."
-  />
-</Helmet>
+        <title>Courses | A&apos;s Online Tutoring Services</title>
+        <meta
+          name="description"
+          content="Explore mathematics, AI, and digital skills courses designed to help students grow in confidence, skill, and future readiness."
+        />
+        <meta
+          property="og:title"
+          content="Courses | A's Online Tutoring Services"
+        />
+        <meta
+          property="og:description"
+          content="Explore mathematics, AI, and digital skills courses designed to help students grow in confidence, skill, and future readiness."
+        />
+      </Helmet>
 
       <Header />
 
@@ -92,7 +105,7 @@ export default function Courses() {
               <p className="mt-8 max-w-3xl text-lg leading-8 text-slate-300">
                 From upper primary and exam-focused Mathematics to digital and AI
                 readiness, A&apos;s Online offers practical, guided learning
-                designed to help students grow with clarity and confidence.
+                designed to help learners grow with clarity and confidence.
               </p>
             </div>
           </div>
@@ -114,11 +127,19 @@ export default function Courses() {
                 key={course.title}
                 className={`rounded-[1.75rem] border p-6 shadow-xl shadow-black/10 backdrop-blur ${course.accent}`}
               >
-                {course.featured ? (
-                  <span className="mb-4 inline-flex rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-white">
-                    Featured
-                  </span>
-                ) : null}
+                <div className="mb-4 flex flex-wrap gap-2">
+                  {course.new ? (
+                    <span className="inline-flex rounded-full border border-yellow-300/20 bg-yellow-300/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-yellow-200">
+                      New
+                    </span>
+                  ) : null}
+
+                  {course.featured ? (
+                    <span className="inline-flex rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-white">
+                      Featured
+                    </span>
+                  ) : null}
+                </div>
 
                 <h3 className="text-xl font-semibold text-white">
                   {course.title}
@@ -160,7 +181,7 @@ export default function Courses() {
                 <p className="text-xs uppercase tracking-[0.25em] text-slate-400">
                   Duration
                 </p>
-                <p className="mt-3 text-lg font-semibold text-white">3 Months</p>
+                <p className="mt-3 text-lg font-semibold text-white">6 Weeks</p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
                 <p className="text-xs uppercase tracking-[0.25em] text-slate-400">
@@ -192,22 +213,22 @@ export default function Courses() {
             </div>
 
             <div className="mt-10 flex flex-wrap gap-4">
-  <a
-    href="/courses/ai-digital-readiness"
-    className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.02]"
-  >
-    Learn More
-  </a>
+              <a
+                href="/courses/ai-digital-readiness"
+                className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.02]"
+              >
+                Learn More
+              </a>
 
-  <a
-    href={registrationLink}
-    target="_blank"
-    rel="noreferrer"
-    className="rounded-full border border-white/15 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20"
-  >
-    Register Now
-  </a>
-</div>
+              <a
+                href={registrationLink}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full border border-white/15 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20"
+              >
+                Register Now
+              </a>
+            </div>
           </div>
         </section>
       </main>
@@ -216,4 +237,5 @@ export default function Courses() {
     </div>
   );
 }
+
 

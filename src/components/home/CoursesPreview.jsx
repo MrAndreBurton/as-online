@@ -28,8 +28,14 @@ const courses = [
   {
     title: "AI & Digital Readiness",
     description:
-      "Practical digital skills courses designed to prepare students for a changing world.",
+      "A 6-week practical programme designed to help students entering Form 1 become more confident, organised, and ready to use technology and AI for school.",
     link: "/courses/ai-digital-readiness",
+  },
+  {
+    title: "Practical AI for Adults",
+    description:
+      "A 4-week practical in-person course for adults who want to use AI more confidently for writing, planning, productivity, and everyday tasks.",
+    link: "/courses/practical-ai-for-adults",
   },
 ];
 
@@ -47,8 +53,8 @@ export default function CoursesPreview() {
         </div>
         <p className="max-w-xl text-sm leading-7 text-slate-400">
           At A&apos;s Online Tutoring Services, we bring passion, innovation, and a
-          personal touch to SEA, CSEC, and AI learning. Your success is what
-          we&apos;re all about.
+          personal touch to SEA, CSEC, digital readiness, and practical AI
+          learning. Your success is what we&apos;re all about.
         </p>
       </div>
 
@@ -85,4 +91,5 @@ export default function CoursesPreview() {
     </section>
   );
 }
+
 

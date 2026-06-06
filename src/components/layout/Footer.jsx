@@ -4,7 +4,21 @@ const navigation = [
   { name: "Home", path: "/" },
   { name: "About", path: "/about" },
   { name: "Tutoring", path: "/tutoring" },
-  { name: "Courses", path: "/courses" },
+  {
+    name: "Courses",
+    path: "/courses",
+    children: [
+      { name: "All Courses", path: "/courses" },
+      {
+        name: "AI & Digital Readiness",
+        path: "/courses/ai-digital-readiness",
+      },
+      {
+        name: "Practical AI for Adults",
+        path: "/courses/practical-ai-for-adults",
+      },
+    ],
+  },
   { name: "Resources", path: "/resources" },
   { name: "Contact", path: "/contact" },
   { name: "CountMeInTT", path: "/countmeintt", featured: true },
@@ -26,20 +40,48 @@ export default function Footer() {
           <h4 className="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">
             Quick Links
           </h4>
+
           <div className="mt-4 flex flex-col gap-3 text-sm text-slate-300">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.path}
-                className={
-                  item.featured
-                    ? "font-semibold text-yellow-300 transition hover:text-yellow-200"
-                    : "transition hover:text-sky-300"
-                }
-              >
-                {item.name}
-              </Link>
-            ))}
+            {navigation.map((item) => {
+              if (item.children) {
+                return (
+                  <div key={item.name} className="space-y-2">
+                    <Link
+                      to={item.path}
+                      className="font-medium transition hover:text-sky-300"
+                    >
+                      {item.name}
+                    </Link>
+
+                    <div className="ml-4 flex flex-col gap-2 border-l border-white/10 pl-4">
+                      {item.children.map((child) => (
+                        <Link
+                          key={child.name}
+                          to={child.path}
+                          className="text-slate-400 transition hover:text-sky-300"
+                        >
+                          {child.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                );
+              }
+
+              return (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  className={
+                    item.featured
+                      ? "font-semibold text-yellow-300 transition hover:text-yellow-200"
+                      : "transition hover:text-sky-300"
+                  }
+                >
+                  {item.name}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -47,7 +89,6 @@ export default function Footer() {
       <div className="border-t border-white/10 px-6 py-4 text-center text-sm text-slate-500 lg:px-8">
         © {new Date().getFullYear()} A&apos;s Online Tutoring Services. All
         rights reserved.
-        This website was designed and created by A's Online.
       </div>
     </footer>
   );

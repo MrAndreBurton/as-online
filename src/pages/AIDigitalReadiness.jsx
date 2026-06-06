@@ -7,83 +7,89 @@ const registrationLink =
 
 const moduleList = [
   {
-    title: "Module 1: Digital Foundations",
-    weeks: "Weeks 1–4",
+    title: "Digital Foundations",
     color: "text-yellow-300",
-    objective: "Students become independent computer users.",
+    objective:
+      "Students build confidence moving around a computer and handling basic digital school tasks.",
     content: [
-      "Keyboard and typing basics",
-      "Files, folders, and saving work",
-      "Using a browser properly",
-      "Internet safety",
-      "Email basics",
+      "Getting started with computers",
+      "Typing, editing, and building confidence with documents",
+      "Files, folders, and staying organised",
+      "Using a browser and finding information online",
+      "Internet safety and smart online habits",
     ],
-    outcome: "Student can use a computer without help.",
+    outcome:
+      "Students become more confident navigating a computer, saving work, and managing digital tasks.",
   },
   {
-    title: "Module 2: School Productivity Skills",
-    weeks: "Weeks 5–8",
+    title: "School Productivity Skills",
     color: "text-sky-300",
-    objective: "Students learn to use technology for school work.",
+    objective:
+      "Students learn to use technology for practical schoolwork and communication.",
     content: [
-      "Google Docs for typing and formatting",
-      "Google Slides for presentations",
-      "Research skills",
-      "Organising school work digitally",
+      "Getting started with Google Docs",
+      "Formatting and organising work in Google Docs",
+      "Getting started with Google Slides",
+      "Designing clear and neat presentations in Google Slides",
     ],
-    outcome: "Student can complete assignments digitally.",
+    outcome:
+      "Students can create and improve basic school documents and presentations.",
   },
   {
-    title: "Module 3: AI for Learning",
-    weeks: "Weeks 9–12",
+    title: "AI for Learning",
     color: "text-emerald-300",
-    objective: "Students learn to use AI correctly and safely.",
+    objective:
+      "Students are introduced to AI in a simple, practical, and responsible way.",
     content: [
-      "What AI is in simple terms",
-      "Asking good questions",
-      "Using AI for explanations",
-      "Using AI for studying",
+      "What AI is and how it can help with learning",
+      "Asking better questions",
+      "Using AI for explanations and study support",
       "Checking AI answers",
-      "Responsible use",
+      "Using AI responsibly",
     ],
-    outcome: "Student uses AI as a learning tool, not a shortcut.",
+    outcome:
+      "Students use AI as a learning support tool, not a shortcut.",
   },
 ];
 
 const outcomes = [
-  "Use a computer confidently",
-  "Type and organise school work digitally",
-  "Create documents and presentations",
-  "Research information online effectively",
-  "Use AI tools responsibly for learning",
-  "Be better prepared for Form 1",
+  "Use a computer more confidently",
+  "Save, organise, and find schoolwork properly",
+  "Type, edit, and organise schoolwork digitally",
+  "Create basic documents and presentations",
+  "Research information online more effectively",
+  "Use AI as a learning support tool responsibly",
+  "Feel better prepared for Form 1",
 ];
 
 const strengths = [
   "Post-SEA timing gives parents structure at the right moment",
-  "Schools are not teaching AI properly yet",
-  "Built by a teacher, content creator, and digital practitioner",
-  "Small group format feels premium and focused",
+  "Students need stronger digital confidence for modern school life",
+  "Built by an experienced educator and digital practitioner",
+  "Small group format allows for focused support",
 ];
 
 export default function AIDigitalReadiness() {
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <Helmet>
-  <title>Future Skills: AI & Digital Readiness for Form 1 Students | A's Online</title>
-  <meta
-    name="description"
-    content="A 3-month small-group programme helping students enter Form 1 confident, organised, and ready to use technology and AI for school."
-  />
-  <meta
-    property="og:title"
-    content="Future Skills: AI & Digital Readiness for Form 1 Students | A's Online"
-  />
-  <meta
-    property="og:description"
-    content="A 3-month small-group programme helping students enter Form 1 confident, organised, and ready to use technology and AI for school."
-  />
-</Helmet>
+        <title>
+          Future Skills: AI & Digital Readiness for Form 1 Students | A&apos;s
+          Online
+        </title>
+        <meta
+          name="description"
+          content="A 6-week small-group programme helping students enter Form 1 confident, organised, and ready to use technology and AI for school."
+        />
+        <meta
+          property="og:title"
+          content="Future Skills: AI & Digital Readiness for Form 1 Students | A's Online"
+        />
+        <meta
+          property="og:description"
+          content="A 6-week small-group programme helping students enter Form 1 confident, organised, and ready to use technology and AI for school."
+        />
+      </Helmet>
 
       <Header />
 
@@ -121,14 +127,14 @@ export default function AIDigitalReadiness() {
                 <p className="text-xs uppercase tracking-[0.25em] text-slate-400">
                   Duration
                 </p>
-                <p className="mt-3 text-lg font-semibold text-white">3 Months</p>
+                <p className="mt-3 text-lg font-semibold text-white">6 Weeks</p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
                 <p className="text-xs uppercase tracking-[0.25em] text-slate-400">
                   Schedule
                 </p>
                 <p className="mt-3 text-lg font-semibold text-white">
-                  2 Hours per Week
+                  2 sessions per week
                 </p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
@@ -146,11 +152,16 @@ export default function AIDigitalReadiness() {
         <section className="mx-auto max-w-7xl px-6 pb-20 lg:px-8">
           <div className="mb-8 max-w-3xl">
             <p className="text-sm uppercase tracking-[0.3em] text-sky-300">
-              Module Breakdown
+              Programme Breakdown
             </p>
             <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white lg:text-4xl">
-              A clear 3-month path into Form 1 readiness.
+              A clear 6-week path into Form 1 readiness.
             </h2>
+            <p className="mt-4 text-base leading-8 text-slate-300">
+              Students build digital confidence step by step through computer
+              navigation, school productivity tools, and a practical
+              introduction to responsible AI use.
+            </p>
           </div>
 
           <div className="grid gap-6 xl:grid-cols-3">
@@ -162,7 +173,7 @@ export default function AIDigitalReadiness() {
                 <p
                   className={`text-sm font-semibold uppercase tracking-[0.2em] ${module.color}`}
                 >
-                  {module.weeks}
+                  Programme Module
                 </p>
 
                 <h3 className="mt-3 text-2xl font-semibold text-white">
@@ -203,9 +214,9 @@ export default function AIDigitalReadiness() {
               My Form 1 Digital Success Plan
             </h2>
             <p className="mt-6 text-base leading-8 text-slate-300">
-              Students will type a document in Google Docs, create a short
-              presentation in Google Slides, and use AI to assist with ideas,
-              explanations, and planning.
+              Students will complete a short Google Doc, create a simple Google
+              Slides presentation, and use AI in a guided, responsible way to
+              support ideas, explanations, and planning.
             </p>
           </div>
 
@@ -217,8 +228,9 @@ export default function AIDigitalReadiness() {
               Certificate of Completion
             </h2>
             <p className="mt-6 text-base leading-8 text-slate-300">
-              This certifies that <span className="text-white">[Student Name]</span>{" "}
-              has successfully completed the{" "}
+              This certifies that{" "}
+              <span className="text-white">[Student Name]</span> has successfully
+              completed the{" "}
               <span className="text-white">
                 Future Skills: AI &amp; Digital Readiness Programme
               </span>{" "}
@@ -253,12 +265,14 @@ export default function AIDigitalReadiness() {
               Pricing
             </p>
             <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white">
-              $400 / month
+              TT$600 total
             </h2>
-            <p className="mt-3 text-lg text-slate-200">3 months = $1200</p>
+            <p className="mt-3 text-lg text-slate-200">
+              6 weeks · 12 sessions · Small group
+            </p>
             <p className="mt-6 text-base leading-8 text-slate-200">
-              Full payment discount available:{" "}
-              <span className="font-semibold text-white">$1100</span>
+              Includes guided practical sessions, final project, and certificate
+              of completion.
             </p>
 
             <a
@@ -309,7 +323,7 @@ export default function AIDigitalReadiness() {
             </p>
             <h2 className="mt-4 max-w-3xl text-3xl font-semibold tracking-tight text-white lg:text-4xl">
               Give your child a stronger start to secondary school with the
-              digital and AI skills they will actually use.
+              digital skills and responsible AI awareness they will actually use.
             </h2>
 
             <div className="mt-8 flex flex-wrap gap-4">
@@ -330,4 +344,5 @@ export default function AIDigitalReadiness() {
     </div>
   );
 }
+
 

@@ -5,6 +5,7 @@ import About from "./pages/About";
 import Tutoring from "./pages/Tutoring";
 import Courses from "./pages/Courses";
 import AIDigitalReadiness from "./pages/AIDigitalReadiness";
+import PracticalAIAdults from "./pages/PracticalAIAdults";
 import Resources from "./pages/Resources";
 import Contact from "./pages/Contact";
 import CountMeInTT from "./pages/CountMeInTT";
@@ -22,6 +23,7 @@ export default function App() {
           path="/courses/ai-digital-readiness"
           element={<AIDigitalReadiness />}
         />
+        <Route path="/courses/practical-ai-for-adults" element={<PracticalAIAdults />} />
         <Route path="/resources" element={<Resources />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/countmeintt" element={<CountMeInTT />} />
