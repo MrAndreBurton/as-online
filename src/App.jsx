@@ -10,6 +10,13 @@ import Resources from "./pages/Resources";
 import Contact from "./pages/Contact";
 import CountMeInTT from "./pages/CountMeInTT";
 
+import Login from "./pages/Login";
+import { PortalRoutes } from "./PortalRoutes";
+
+import SetPassword from "./pages/SetPassword";
+
+
+
 export default function App() {
   return (
     <>
@@ -27,6 +34,10 @@ export default function App() {
         <Route path="/resources" element={<Resources />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/countmeintt" element={<CountMeInTT />} />
+
+     <Route path="/login" element={<Login />} />
+<Route path="/set-password" element={<SetPassword />} />
+{PortalRoutes()}
       </Routes>
     </>
   );

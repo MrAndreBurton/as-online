@@ -1,0 +1,23 @@
+.recurring-toggle {
+  display: flex !important;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+.recurring-toggle input {
+  width: 18px;
+  height: 18px;
+  min-height: auto !important;
+}
+
+.series-reconcile-result {
+  display: grid;
+  gap: 5px;
+  margin-top: 14px;
+  padding: 13px;
+  border: 1px solid var(--aeos-border);
+  border-radius: 11px;
+  background: #f7f9fb;
+  color: var(--aeos-muted);
+}

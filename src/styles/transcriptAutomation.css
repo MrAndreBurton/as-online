@@ -1,0 +1,8 @@
+.transcript-subscription-card{margin-bottom:18px}
+.transcript-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.transcript-review-list{display:grid;gap:12px;margin-top:15px}
+.transcript-review-item{display:grid;gap:14px;padding:16px;border:1px solid var(--aeos-border);border-radius:14px;background:#fafbfd}
+.transcript-review-item p{margin:5px 0;color:var(--aeos-muted)}
+.transcript-match-form{display:flex;gap:10px}
+.transcript-match-form select{flex:1;min-height:44px;border:1px solid var(--aeos-border);border-radius:10px;padding:0 12px;background:white;font:inherit}
+@media(max-width:700px){.transcript-match-form{flex-direction:column}}

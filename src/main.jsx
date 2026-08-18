@@ -5,13 +5,21 @@ import { HelmetProvider } from "react-helmet-async";
 import App from "./App";
 import "./index.css";
 
+import { AuthProvider } from "./contexts/AuthContext";
+import "./portal.css";
+
+import "./styles/recurringCalendar.css";
+
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <HelmetProvider>
       <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </HelmetProvider>
-  </React.StrictMode>
-);
+        <AuthProvider>
+         <App />
+         </AuthProvider>
+        </BrowserRouter>
+      </HelmetProvider>
+    </React.StrictMode>
+  );
 

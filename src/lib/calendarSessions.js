@@ -1,0 +1,24 @@
+import { supabase } from "./supabase";
+
+async function invoke(body) {
+  const { data, error } = await supabase.functions.invoke("schedule-session", { body });
+  if (error) throw error;
+  if (!data?.ok) throw new Error(data?.error || "Calendar operation failed.");
+  return data;
+}
+
+export function scheduleAeosSession(payload) {
+  return invoke({ action: "create", ...payload });
+}
+
+export function syncGoogleSession(sessionId) {
+  return invoke({ action: "sync", sessionId });
+}
+
+export function updateGoogleSession(payload) {
+  return invoke({ action: "update", ...payload });
+}
+
+export function cancelGoogleSession(sessionId) {
+  return invoke({ action: "cancel", sessionId });
+}
