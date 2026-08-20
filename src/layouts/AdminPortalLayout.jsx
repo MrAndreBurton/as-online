@@ -4,8 +4,9 @@ import PortalHeader from "../components/portal/PortalHeader";
 const links = [
   ["/portal/admin","Dashboard",true],
   ["/portal/admin/students","Students"],
+  ["/portal/admin/calendar","Calendar"],
   ["/portal/admin/sessions","Sessions"],
-  ["/portal/admin/transcripts","Transcripts"],
+  ["/portal/admin/transcripts","Learning Intake"],
   ["/portal/admin/evidence","Evidence Review"],
   ["/portal/admin/curriculum","Curriculum"],
   ["/portal/admin/pen-e","Pen-E"],

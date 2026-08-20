@@ -1,0 +1,83 @@
+.pen-e-review-heading-count {
+  display: grid;
+  justify-items: end;
+}
+
+.pen-e-review-heading-count strong {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.pen-e-review-heading-count span {
+  margin-top: 3px;
+
+  font-size: 0.78rem;
+  opacity: 0.65;
+}
+
+.pen-e-review-browser {
+  display: grid;
+  gap: 18px;
+}
+
+.pen-e-review-search {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+
+  gap: 10px;
+}
+
+.pen-e-review-search input {
+  width: 100%;
+}
+
+.pen-e-review-filters {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(160px, 1fr)
+    )
+    auto;
+
+  gap: 10px;
+}
+
+.pen-e-review-row {
+  cursor: pointer;
+}
+
+.pen-e-review-row:hover {
+  background: #f8f9fc;
+}
+
+.pen-e-review-row:focus {
+  outline: 2px solid currentColor;
+  outline-offset: -2px;
+}
+
+.pen-e-review-table td:first-child,
+.pen-e-review-table td:last-child {
+  display: grid;
+  gap: 2px;
+}
+
+.pen-e-review-table small {
+  opacity: 0.62;
+}
+
+.pen-e-pending-count {
+  font-size: 1rem;
+}
+
+@media (max-width: 800px) {
+  .pen-e-review-search,
+  .pen-e-review-filters {
+    grid-template-columns: 1fr;
+  }
+}
+

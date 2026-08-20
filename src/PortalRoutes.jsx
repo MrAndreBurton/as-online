@@ -17,6 +17,25 @@ import SessionWorkspacePage from "./pages/portal/admin/SessionWorkspacePage";
 
 import TranscriptAutomationPage from "./pages/portal/admin/TranscriptAutomationPage";
 
+import PenEPage from "./pages/portal/admin/PenEPage";
+
+import CalendarPage from "./pages/portal/admin/CalendarPage";
+
+import PenESessionsPage from "./pages/portal/admin/PenESessionsPage";
+import PenESessionDetailPage from "./pages/portal/admin/PenESessionDetailPage";
+
+import PenEAnalyzePage from "./pages/portal/admin/PenEAnalyzePage";
+import PenEAnalyzeWorkspacePage from "./pages/portal/admin/PenEAnalyzeWorkspacePage";
+
+import PenEStudentsPage from "./pages/portal/admin/PenEStudentsPage";
+import PenEStudentHistoryPage from "./pages/portal/admin/PenEStudentHistoryPage";
+
+import PenEReviewPage from "./pages/portal/admin/PenEReviewPage";
+
+import PenETutorsPage from "./pages/portal/admin/PenETutorsPage";
+import PenETutorHistoryPage from "./pages/portal/admin/PenETutorHistoryPage";
+
+
 export function PortalRoutes() {
   return <>
     <Route path="/portal" element={<ProtectedRoute><PortalEntry /></ProtectedRoute>} />
@@ -29,27 +48,107 @@ export function PortalRoutes() {
       <Route path="pen-e" element={<StudentPlaceholder title="Pen-E & Me" copy="This becomes the student's personal AI learning space." />} />
     </Route>
 
-    <Route path="/portal/admin" element={<ProtectedRoute><RoleRoute role="admin_tutor"><AdminPortalLayout /></RoleRoute></ProtectedRoute>}>
-      <Route index element={<AdminDashboard />} />
-      <Route path="students" element={<StudentsPage />} />
-<Route
-  path="students/:studentUserId"
-  element={<StudentProfilePage />}
-/>
-      <Route path="sessions" element={<SessionsPage />} />
-<Route
-  path="sessions/:sessionId"
-  element={<SessionWorkspacePage />}
+    <Route
+  path="/portal/admin"
+  element={
+    <ProtectedRoute>
+      <RoleRoute role="admin_tutor">
+        <AdminPortalLayout />
+      </RoleRoute>
+    </ProtectedRoute>
+  }
+>
+  <Route index element={<AdminDashboard />} />
+
+  <Route path="students" element={<StudentsPage />} />
+
+  <Route
+    path="students/:studentId"
+    element={<StudentProfilePage />}
+  />
+
+  <Route path="calendar" element={<CalendarPage />} />
+
+  <Route path="sessions" element={<SessionsPage />} />
+
+  <Route
+    path="sessions/:sessionId"
+    element={<SessionWorkspacePage />}
+  />
+
+  <Route
+    path="transcripts"
+    element={<TranscriptAutomationPage />}
+  />
+
+  <Route
+    path="evidence"
+    element={
+      <AdminPlaceholder
+        title="Evidence Review"
+        copy="Suggested learning evidence will be approved here."
+      />
+    }
+  />
+
+  <Route
+    path="curriculum"
+    element={
+      <AdminPlaceholder
+        title="Curriculum"
+        copy="AEOS Subjects, Offerings, Learning Nodes and Profiles will be managed here."
+      />
+    }
+  />
+
+  <Route path="pen-e" element={<PenEPage />} />
+
+  <Route
+  path="pen-e/sessions"
+  element={<PenESessionsPage />}
 />
 
 <Route
-  path="transcripts"
-  element={<TranscriptAutomationPage />}
+  path="pen-e/sessions/:sessionId"
+  element={<PenESessionDetailPage />}
 />
 
-      <Route path="evidence" element={<AdminPlaceholder title="Evidence Review" copy="Suggested learning evidence will be approved here." />} />
-      <Route path="curriculum" element={<AdminPlaceholder title="Curriculum" copy="AEOS Subjects, Offerings, Learning Nodes and Profiles will be managed here." />} />
-      <Route path="pen-e" element={<AdminPlaceholder title="Pen-E Tutor Tools" copy="Session summaries, lesson suggestions and practice generation will live here." />} />
-    </Route>
+<Route
+  path="pen-e/analyze"
+  element={<PenEAnalyzePage />}
+/>
+
+<Route
+  path="pen-e/analyze/:intakeItemId"
+  element={<PenEAnalyzeWorkspacePage />}
+/>
+
+<Route
+  path="pen-e/students"
+  element={<PenEStudentsPage />}
+/>
+
+<Route
+  path="pen-e/students/:studentId"
+  element={<PenEStudentHistoryPage />}
+/>
+
+<Route
+  path="pen-e/review"
+  element={<PenEReviewPage />}
+/>
+
+<Route
+  path="pen-e/tutors"
+  element={<PenETutorsPage />}
+/>
+
+<Route
+  path="pen-e/tutors/:tutorUserId"
+  element={<PenETutorHistoryPage />}
+/>
+
+
+</Route>
   </>;
 }

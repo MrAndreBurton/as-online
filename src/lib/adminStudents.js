@@ -3,11 +3,23 @@ import { supabase } from "./supabase";
 function fullName(row) {
   return (
     row?.display_name ||
-    [row?.first_name, row?.last_name].filter(Boolean).join(" ") ||
+    [row?.first_name, row?.last_name]
+      .filter(Boolean)
+      .join(" ") ||
     "Student"
   );
 }
 
+/**
+ * ============================================================
+ * ADMIN STUDENT LIST
+ * ============================================================
+ *
+ * Canonical source:
+ *   aeos_students
+ *
+ * Portal/Auth profile is optional.
+ */
 export async function fetchAdminStudents() {
   const [
     studentsResult,
@@ -17,31 +29,74 @@ export async function fetchAdminStudents() {
     subjectsResult,
   ] = await Promise.all([
     supabase
-      .from("student_profiles")
+      .from("aeos_students")
       .select(
-        "user_id,first_name,last_name,display_name,phone,date_of_birth,school,created_at,updated_at"
+        `
+        student_id,
+        portal_user_id,
+        first_name,
+        last_name,
+        display_name,
+        email,
+        phone,
+        date_of_birth,
+        school,
+        student_status,
+        portal_status,
+        notes,
+        created_at,
+        updated_at
+        `
       )
-      .order("created_at", { ascending: false }),
+      .neq("student_status", "archived")
+      .order("created_at", {
+        ascending: false,
+      }),
 
     supabase
       .from("profiles")
-      .select("id,email,app_role,is_active,created_at")
+      .select(
+        "id,email,app_role,is_active,created_at"
+      )
       .eq("app_role", "student"),
 
     supabase
       .from("aeos_student_enrolments")
       .select(
-        "enrolment_id,student_user_id,offering_id,status,enrolled_at,ended_at"
+        `
+        enrolment_id,
+        student_id,
+        student_user_id,
+        offering_id,
+        status,
+        enrolled_at,
+        ended_at
+        `
       )
       .in("status", ["active", "paused"]),
 
     supabase
       .from("aeos_offerings")
-      .select("offering_id,offering_name,subject_id,audience_level_id,status"),
+      .select(
+        `
+        offering_id,
+        offering_name,
+        programme_id,
+        subject_id,
+        audience_level_id,
+        status
+        `
+      ),
 
     supabase
       .from("aeos_subjects")
-      .select("subject_id,subject_name,display_name"),
+      .select(
+        `
+        subject_id,
+        subject_name,
+        display_name
+        `
+      ),
   ]);
 
   const results = [
@@ -51,214 +106,781 @@ export async function fetchAdminStudents() {
     offeringsResult,
     subjectsResult,
   ];
-  const firstError = results.find((result) => result.error)?.error;
-  if (firstError) throw firstError;
 
-  const profilesById = new Map(
-    (profilesResult.data ?? []).map((row) => [row.id, row])
-  );
-  const offeringsById = new Map(
-    (offeringsResult.data ?? []).map((row) => [row.offering_id, row])
-  );
-  const subjectsById = new Map(
-    (subjectsResult.data ?? []).map((row) => [row.subject_id, row])
-  );
+  const firstError =
+    results.find(
+      (result) => result.error
+    )?.error;
 
-  const enrolmentsByStudent = new Map();
-  for (const enrolment of enrolmentsResult.data ?? []) {
-    if (!enrolmentsByStudent.has(enrolment.student_user_id)) {
-      enrolmentsByStudent.set(enrolment.student_user_id, []);
-    }
-
-    const offering = offeringsById.get(enrolment.offering_id);
-    enrolmentsByStudent.get(enrolment.student_user_id).push({
-      ...enrolment,
-      offering: offering
-        ? {
-            ...offering,
-            subject: subjectsById.get(offering.subject_id) ?? null,
-          }
-        : null,
-    });
+  if (firstError) {
+    throw firstError;
   }
 
-  return (studentsResult.data ?? []).map((student) => ({
-    ...student,
-    name: fullName(student),
-    profile: profilesById.get(student.user_id) ?? null,
-    enrolments: enrolmentsByStudent.get(student.user_id) ?? [],
-  }));
+  const students =
+    studentsResult.data ?? [];
+
+  const profiles =
+    profilesResult.data ?? [];
+
+  const enrolments =
+    enrolmentsResult.data ?? [];
+
+  const offerings =
+    offeringsResult.data ?? [];
+
+  const subjects =
+    subjectsResult.data ?? [];
+
+  const profilesById = new Map(
+    profiles.map((row) => [
+      row.id,
+      row,
+    ])
+  );
+
+  const offeringsById = new Map(
+    offerings.map((row) => [
+      row.offering_id,
+      row,
+    ])
+  );
+
+  const subjectsById = new Map(
+    subjects.map((row) => [
+      row.subject_id,
+      row,
+    ])
+  );
+
+  return students.map((student) => {
+    const profile =
+      student.portal_user_id
+        ? profilesById.get(
+            student.portal_user_id
+          ) ?? null
+        : null;
+
+    const studentEnrolments =
+      enrolments
+        .filter((enrolment) => {
+          if (
+            enrolment.student_id ===
+            student.student_id
+          ) {
+            return true;
+          }
+
+          if (
+            student.portal_user_id &&
+            enrolment.student_user_id ===
+              student.portal_user_id
+          ) {
+            return true;
+          }
+
+          return false;
+        })
+        .map((enrolment) => {
+          const offering =
+            offeringsById.get(
+              enrolment.offering_id
+            ) ?? null;
+
+          const subject = offering
+            ? subjectsById.get(
+                offering.subject_id
+              ) ?? null
+            : null;
+
+          return {
+            ...enrolment,
+
+            offering: offering
+              ? {
+                  ...offering,
+                  subject,
+                }
+              : null,
+          };
+        });
+
+    return {
+      ...student,
+
+      name: fullName(student),
+
+      profile,
+
+      enrolments: studentEnrolments,
+
+      // Temporary compatibility field
+      // for older components.
+      user_id:
+        student.portal_user_id,
+    };
+  });
 }
 
-export async function fetchAdminStudentById(studentUserId) {
+/**
+ * ============================================================
+ * SINGLE STUDENT PROFILE
+ * ============================================================
+ *
+ * IMPORTANT:
+ * studentId = aeos_students.student_id
+ *
+ * We do NOT assume a portal/Auth account exists.
+ */
+export async function fetchAdminStudentById(
+  studentId
+) {
+  // ----------------------------------------
+  // 1. Load canonical student first.
+  // ----------------------------------------
+
+  const {
+    data: student,
+    error: studentError,
+  } = await supabase
+    .from("aeos_students")
+    .select(
+      `
+      student_id,
+      portal_user_id,
+      first_name,
+      last_name,
+      display_name,
+      email,
+      phone,
+      date_of_birth,
+      school,
+      student_status,
+      portal_status,
+      notes,
+      created_at,
+      updated_at
+      `
+    )
+    .eq("student_id", studentId)
+    .single();
+
+  if (studentError) {
+    throw studentError;
+  }
+
+  if (!student) {
+    throw new Error(
+      "Student not found."
+    );
+  }
+
+  const portalUserId =
+    student.portal_user_id;
+
+  // ----------------------------------------
+  // 2. Load data that does NOT depend
+  //    on portal access.
+  // ----------------------------------------
+
   const [
-    studentResult,
-    profileResult,
-    enrolmentsResult,
     offeringsResult,
     subjectsResult,
-    sessionsResult,
   ] = await Promise.all([
-    supabase
-      .from("student_profiles")
-      .select(
-        "user_id,first_name,last_name,display_name,phone,date_of_birth,school,created_at,updated_at"
-      )
-      .eq("user_id", studentUserId)
-      .single(),
-
-    supabase
-      .from("profiles")
-      .select("id,email,app_role,is_active,created_at")
-      .eq("id", studentUserId)
-      .single(),
-
-    supabase
-      .from("aeos_student_enrolments")
-      .select(
-        "enrolment_id,student_user_id,offering_id,status,enrolled_at,ended_at"
-      )
-      .eq("student_user_id", studentUserId)
-      .order("enrolled_at", { ascending: false }),
-
     supabase
       .from("aeos_offerings")
       .select(
-        "offering_id,offering_name,programme_id,subject_id,audience_level_id,status"
+        `
+        offering_id,
+        offering_name,
+        programme_id,
+        subject_id,
+        audience_level_id,
+        status
+        `
       )
       .eq("status", "Active")
       .order("offering_name"),
 
     supabase
       .from("aeos_subjects")
-      .select("subject_id,subject_name,display_name"),
-
-    supabase
-      .from("aeos_sessions")
       .select(
-        "session_id,offering_id,session_title,session_status,scheduled_start_at,scheduled_end_at,started_at,ended_at,meeting_url"
-      )
-      .eq("student_user_id", studentUserId)
-      .order("scheduled_start_at", { ascending: false })
-      .limit(10),
+        `
+        subject_id,
+        subject_name,
+        display_name
+        `
+      ),
   ]);
 
-  const results = [
-    studentResult,
-    profileResult,
-    enrolmentsResult,
-    offeringsResult,
-    subjectsResult,
-    sessionsResult,
-  ];
-  const firstError = results.find((result) => result.error)?.error;
-  if (firstError) throw firstError;
+  if (offeringsResult.error) {
+    throw offeringsResult.error;
+  }
+
+  if (subjectsResult.error) {
+    throw subjectsResult.error;
+  }
+
+  // ----------------------------------------
+  // 3. Enrolments
+  //
+  // New records use student_id.
+  // Older records may still use
+  // student_user_id.
+  // ----------------------------------------
+
+  let enrolmentsQuery = supabase
+    .from("aeos_student_enrolments")
+    .select(
+      `
+      enrolment_id,
+      student_id,
+      student_user_id,
+      offering_id,
+      status,
+      enrolled_at,
+      ended_at
+      `
+    );
+
+  if (portalUserId) {
+    enrolmentsQuery =
+      enrolmentsQuery.or(
+        `student_id.eq.${studentId},student_user_id.eq.${portalUserId}`
+      );
+  } else {
+    enrolmentsQuery =
+      enrolmentsQuery.eq(
+        "student_id",
+        studentId
+      );
+  }
+
+  const enrolmentsResult =
+    await enrolmentsQuery.order(
+      "enrolled_at",
+      {
+        ascending: false,
+      }
+    );
+
+  if (enrolmentsResult.error) {
+    throw enrolmentsResult.error;
+  }
+
+  // ----------------------------------------
+  // 4. Sessions
+  //
+  // Same compatibility strategy.
+  // ----------------------------------------
+
+  let sessionsQuery = supabase
+    .from("aeos_sessions")
+    .select(
+      `
+      session_id,
+      student_id,
+      student_user_id,
+      offering_id,
+      session_title,
+      session_status,
+      session_origin,
+      attendance_status,
+      attendance_notes,
+      scheduled_start_at,
+      scheduled_end_at,
+      started_at,
+      ended_at,
+      meeting_url,
+      google_meet_url,
+      calendar_sync_requirement,
+      google_sync_status
+      `
+    );
+
+  if (portalUserId) {
+    sessionsQuery =
+      sessionsQuery.or(
+        `student_id.eq.${studentId},student_user_id.eq.${portalUserId}`
+      );
+  } else {
+    sessionsQuery =
+      sessionsQuery.eq(
+        "student_id",
+        studentId
+      );
+  }
+
+  const sessionsResult =
+    await sessionsQuery
+      .order("scheduled_start_at", {
+        ascending: false,
+      })
+      .limit(20);
+
+  if (sessionsResult.error) {
+    throw sessionsResult.error;
+  }
+
+  // ----------------------------------------
+  // 5. Portal/Auth profile is optional.
+  // ----------------------------------------
+
+  let profile = null;
+
+  if (portalUserId) {
+    const {
+      data: profileData,
+      error: profileError,
+    } = await supabase
+      .from("profiles")
+      .select(
+        `
+        id,
+        email,
+        app_role,
+        is_active,
+        created_at
+        `
+      )
+      .eq("id", portalUserId)
+      .maybeSingle();
+
+    if (profileError) {
+      throw profileError;
+    }
+
+    profile = profileData;
+  }
+
+  // ----------------------------------------
+  // 6. Build Offering / Subject maps.
+  // ----------------------------------------
 
   const subjectsById = new Map(
-    (subjectsResult.data ?? []).map((row) => [row.subject_id, row])
+    (
+      subjectsResult.data ?? []
+    ).map((row) => [
+      row.subject_id,
+      row,
+    ])
   );
-  const offerings = (offeringsResult.data ?? []).map((offering) => ({
+
+  const offerings = (
+    offeringsResult.data ?? []
+  ).map((offering) => ({
     ...offering,
-    subject: subjectsById.get(offering.subject_id) ?? null,
+
+    subject:
+      subjectsById.get(
+        offering.subject_id
+      ) ?? null,
   }));
+
   const offeringsById = new Map(
-    offerings.map((row) => [row.offering_id, row])
+    offerings.map((row) => [
+      row.offering_id,
+      row,
+    ])
   );
 
-  const enrolments = (enrolmentsResult.data ?? []).map((enrolment) => ({
+  // ----------------------------------------
+  // 7. Enrolment enrichment.
+  // ----------------------------------------
+
+  const enrolments = (
+    enrolmentsResult.data ?? []
+  ).map((enrolment) => ({
     ...enrolment,
-    offering: offeringsById.get(enrolment.offering_id) ?? null,
+
+    offering:
+      offeringsById.get(
+        enrolment.offering_id
+      ) ?? null,
   }));
 
-  const sessions = (sessionsResult.data ?? []).map((session) => ({
+  // ----------------------------------------
+  // 8. Session enrichment.
+  // ----------------------------------------
+
+  const sessions = (
+    sessionsResult.data ?? []
+  ).map((session) => ({
     ...session,
-    offering: offeringsById.get(session.offering_id) ?? null,
+
+    offering:
+      offeringsById.get(
+        session.offering_id
+      ) ?? null,
   }));
 
   return {
-    student: studentResult.data,
-    profile: profileResult.data,
+    student: {
+      ...student,
+      name: fullName(student),
+    },
+
+    profile,
+
     enrolments,
+
     offerings,
+
     sessions,
   };
 }
 
-export async function updateStudentProfile(studentUserId, values) {
+/**
+ * ============================================================
+ * UPDATE CANONICAL STUDENT
+ * ============================================================
+ */
+export async function updateStudentProfile(
+  studentId,
+  values
+) {
   const payload = {
-    first_name: values.first_name?.trim() || null,
-    last_name: values.last_name?.trim() || null,
-    display_name: values.display_name?.trim() || null,
-    phone: values.phone?.trim() || null,
-    date_of_birth: values.date_of_birth || null,
-    school: values.school?.trim() || null,
+    first_name:
+      values.first_name?.trim() ||
+      null,
+
+    last_name:
+      values.last_name?.trim() ||
+      null,
+
+    display_name:
+      values.display_name?.trim() ||
+      null,
+
+    email:
+      values.email?.trim() ||
+      null,
+
+    phone:
+      values.phone?.trim() ||
+      null,
+
+    date_of_birth:
+      values.date_of_birth ||
+      null,
+
+    school:
+      values.school?.trim() ||
+      null,
+
+    notes:
+      values.notes?.trim() ||
+      null,
   };
 
-  const { data, error } = await supabase
-    .from("student_profiles")
+  const {
+    data: student,
+    error,
+  } = await supabase
+    .from("aeos_students")
     .update(payload)
-    .eq("user_id", studentUserId)
+    .eq("student_id", studentId)
     .select()
     .single();
 
-  if (error) throw error;
-  return data;
+  if (error) {
+    throw error;
+  }
+
+  /*
+   * Temporary compatibility sync:
+   *
+   * If this student already has an old
+   * student_profiles row, keep it in sync.
+   *
+   * This can be removed once every AEOS
+   * subsystem uses aeos_students.
+   */
+  if (student.portal_user_id) {
+    const legacyPayload = {
+      first_name:
+        payload.first_name,
+
+      last_name:
+        payload.last_name,
+
+      display_name:
+        payload.display_name,
+
+      phone:
+        payload.phone,
+
+      date_of_birth:
+        payload.date_of_birth,
+
+      school:
+        payload.school,
+    };
+
+    const {
+      error: legacyError,
+    } = await supabase
+      .from("student_profiles")
+      .update(legacyPayload)
+      .eq(
+        "user_id",
+        student.portal_user_id
+      );
+
+    if (legacyError) {
+      console.warn(
+        "Canonical student updated, but legacy student_profiles sync failed:",
+        legacyError
+      );
+    }
+  }
+
+  return student;
 }
 
-export async function setStudentActive(studentUserId, isActive) {
-  const { data, error } = await supabase
-    .from("profiles")
-    .update({ is_active: Boolean(isActive) })
-    .eq("id", studentUserId)
-    .select("id,email,is_active")
+/**
+ * ============================================================
+ * ACTIVATE / DEACTIVATE STUDENT
+ * ============================================================
+ *
+ * Canonical status is aeos_students.student_status.
+ *
+ * If a portal account exists, profiles.is_active
+ * is synchronized too.
+ */
+export async function setStudentActive(
+  studentId,
+  isActive
+) {
+  const studentStatus =
+    isActive
+      ? "active"
+      : "inactive";
+
+  const {
+    data: student,
+    error,
+  } = await supabase
+    .from("aeos_students")
+    .update({
+      student_status:
+        studentStatus,
+    })
+    .eq("student_id", studentId)
+    .select(
+      `
+      student_id,
+      portal_user_id,
+      student_status,
+      portal_status
+      `
+    )
     .single();
 
-  if (error) throw error;
-  return data;
+  if (error) {
+    throw error;
+  }
+
+  if (student.portal_user_id) {
+    const {
+      error: profileError,
+    } = await supabase
+      .from("profiles")
+      .update({
+        is_active:
+          Boolean(isActive),
+      })
+      .eq(
+        "id",
+        student.portal_user_id
+      );
+
+    if (profileError) {
+      console.warn(
+        "Student status updated, but portal profile status sync failed:",
+        profileError
+      );
+    }
+  }
+
+  return student;
 }
 
+/**
+ * ============================================================
+ * ENROL STUDENT
+ * ============================================================
+ *
+ * New canonical input:
+ *   studentId
+ *
+ * studentUserId remains optional for
+ * backwards compatibility.
+ */
 export async function enrolStudent({
-  studentUserId,
+  studentId,
+  studentUserId = null,
   offeringId,
   createdBy,
 }) {
-  const { data, error } = await supabase
+  let canonicalStudentId =
+    studentId;
+
+  let portalUserId =
+    studentUserId;
+
+  /*
+   * If only the old user ID was supplied,
+   * resolve the canonical student.
+   */
+  if (
+    !canonicalStudentId &&
+    portalUserId
+  ) {
+    const {
+      data: student,
+      error,
+    } = await supabase
+      .from("aeos_students")
+      .select(
+        "student_id,portal_user_id"
+      )
+      .eq(
+        "portal_user_id",
+        portalUserId
+      )
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    canonicalStudentId =
+      student.student_id;
+  }
+
+  /*
+   * If only canonical studentId was supplied,
+   * obtain portal_user_id if one exists.
+   */
+  if (
+    canonicalStudentId &&
+    !portalUserId
+  ) {
+    const {
+      data: student,
+      error,
+    } = await supabase
+      .from("aeos_students")
+      .select(
+        "student_id,portal_user_id"
+      )
+      .eq(
+        "student_id",
+        canonicalStudentId
+      )
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    portalUserId =
+      student.portal_user_id;
+  }
+
+  if (!canonicalStudentId) {
+    throw new Error(
+      "Student ID is required."
+    );
+  }
+
+  const {
+    data,
+    error,
+  } = await supabase
     .from("aeos_student_enrolments")
     .insert({
-      student_user_id: studentUserId,
-      offering_id: offeringId,
-      status: "active",
-      created_by: createdBy,
+      student_id:
+        canonicalStudentId,
+
+      // May legitimately be null.
+      student_user_id:
+        portalUserId || null,
+
+      offering_id:
+        offeringId,
+
+      status:
+        "active",
+
+      created_by:
+        createdBy,
     })
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
+
   return data;
 }
 
-export async function updateEnrolmentStatus(enrolmentId, status) {
+/**
+ * ============================================================
+ * UPDATE ENROLMENT STATUS
+ * ============================================================
+ */
+export async function updateEnrolmentStatus(
+  enrolmentId,
+  status
+) {
   const payload = {
     status,
+
     ended_at:
-      status === "completed" || status === "withdrawn"
+      status === "completed" ||
+      status === "withdrawn"
         ? new Date().toISOString()
         : null,
   };
 
-  const { data, error } = await supabase
+  const {
+    data,
+    error,
+  } = await supabase
     .from("aeos_student_enrolments")
     .update(payload)
-    .eq("enrolment_id", enrolmentId)
+    .eq(
+      "enrolment_id",
+      enrolmentId
+    )
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
+
   return data;
 }
 
+/**
+ * ============================================================
+ * CREATE SESSION
+ * ============================================================
+ *
+ * Supports both:
+ * - canonical studentId
+ * - legacy studentUserId
+ *
+ * Future scheduled Sessions may still use the
+ * Google scheduling engine; this direct helper
+ * remains useful for compatibility.
+ */
 export async function createStudentSession({
-  studentUserId,
+  studentId,
+  studentUserId = null,
   tutorUserId,
   offeringId,
   title,
@@ -266,34 +888,194 @@ export async function createStudentSession({
   scheduledEndAt,
   meetingUrl,
 }) {
-  const { data, error } = await supabase
+  let canonicalStudentId =
+    studentId;
+
+  let portalUserId =
+    studentUserId;
+
+  if (
+    !canonicalStudentId &&
+    portalUserId
+  ) {
+    const {
+      data: student,
+      error,
+    } = await supabase
+      .from("aeos_students")
+      .select(
+        "student_id,portal_user_id"
+      )
+      .eq(
+        "portal_user_id",
+        portalUserId
+      )
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    canonicalStudentId =
+      student.student_id;
+  }
+
+  if (
+    canonicalStudentId &&
+    !portalUserId
+  ) {
+    const {
+      data: student,
+      error,
+    } = await supabase
+      .from("aeos_students")
+      .select(
+        "student_id,portal_user_id"
+      )
+      .eq(
+        "student_id",
+        canonicalStudentId
+      )
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    portalUserId =
+      student.portal_user_id;
+  }
+
+  if (!canonicalStudentId) {
+    throw new Error(
+      "Student ID is required."
+    );
+  }
+
+  const {
+    data,
+    error,
+  } = await supabase
     .from("aeos_sessions")
     .insert({
-      student_user_id: studentUserId,
-      tutor_user_id: tutorUserId,
-      offering_id: offeringId,
-      session_title: title?.trim() || null,
-      session_status: "scheduled",
-      scheduled_start_at: scheduledStartAt,
-      scheduled_end_at: scheduledEndAt || null,
-      meeting_url: meetingUrl?.trim() || null,
-      created_by: tutorUserId,
+      student_id:
+        canonicalStudentId,
+
+      // Can be null for non-portal students.
+      student_user_id:
+        portalUserId || null,
+
+      tutor_user_id:
+        tutorUserId,
+
+      offering_id:
+        offeringId,
+
+      session_title:
+        title?.trim() ||
+        null,
+
+      session_status:
+        "scheduled",
+
+      session_origin:
+        "scheduled",
+
+      attendance_status:
+        "scheduled",
+
+      scheduled_start_at:
+        scheduledStartAt,
+
+      scheduled_end_at:
+        scheduledEndAt ||
+        null,
+
+      meeting_url:
+        meetingUrl?.trim() ||
+        null,
+
+      calendar_sync_requirement:
+        "required",
+
+      created_by:
+        tutorUserId,
     })
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
+
   return data;
 }
 
-export async function inviteStudent(payload) {
-  const { data, error } = await supabase.functions.invoke("invite-student", {
-    body: payload,
-  });
+/**
+ * ============================================================
+ * INVITE STUDENT
+ * ============================================================
+ *
+ * IMPORTANT:
+ * This is still the OLD invite Edge Function contract.
+ *
+ * We are keeping it working for existing portal students.
+ *
+ * The next upgrade should let us:
+ *
+ * existing aeos_student
+ * → create Auth account
+ * → link portal_user_id
+ *
+ * instead of creating a second student record.
+ */
+export async function inviteStudent(
+  payload
+) {
+  const {
+    data,
+    error,
+  } =
+    await supabase.functions.invoke(
+      "invite-student",
+      {
+        body: payload,
+      }
+    );
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
+
   if (!data?.ok) {
-    throw new Error(data?.error || "Unable to invite student.");
+    throw new Error(
+      data?.error ||
+        "Unable to invite student."
+    );
+  }
+
+  return data;
+}
+
+export async function inviteExistingStudentToPortal(studentId) {
+  const { data, error } = await supabase.functions.invoke(
+    "invite-existing-student",
+    {
+      body: {
+        studentId,
+      },
+    }
+  );
+
+  if (error) {
+    throw error;
+  }
+
+  if (!data?.ok) {
+    throw new Error(
+      data?.error ||
+        "Unable to invite student to portal."
+    );
   }
 
   return data;

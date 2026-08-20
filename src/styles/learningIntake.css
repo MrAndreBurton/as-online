@@ -1,0 +1,13 @@
+.lie-import-modal{max-width:760px}.lie-import-mode{display:flex;gap:8px;margin-bottom:18px}
+.lie-import-mode button{border:1px solid var(--aeos-border);background:#fff;border-radius:10px;padding:9px 13px;font:inherit;cursor:pointer}
+.lie-import-mode button.active{font-weight:700;border-color:currentColor}
+.lie-file-input,.lie-paste-box,.lie-session-select{display:grid;gap:8px}
+.lie-file-input{padding:18px;border:1px dashed var(--aeos-border);border-radius:14px}
+.lie-paste-box textarea{width:100%;resize:vertical;border:1px solid var(--aeos-border);border-radius:12px;padding:12px;font:inherit}
+.lie-detected-card,.lie-suggestions{margin-top:18px;padding:16px;border:1px solid var(--aeos-border);border-radius:14px;background:#fafbfd}
+.lie-detected-card dl{display:grid;gap:10px;margin:12px 0 0}.lie-detected-card dl div{display:grid;grid-template-columns:120px 1fr;gap:10px}
+.lie-detected-card dt{font-weight:700}.lie-session-suggestion{width:100%;display:grid;grid-template-columns:1.3fr 1.3fr 1fr auto;gap:10px;align-items:center;text-align:left;padding:12px;border:1px solid var(--aeos-border);border-radius:11px;background:#fff;margin-top:8px;cursor:pointer}
+.lie-session-suggestion.selected{outline:2px solid currentColor}.lie-session-select{margin-top:18px}
+.lie-session-select select{min-height:44px;border:1px solid var(--aeos-border);border-radius:10px;padding:0 12px;background:#fff;font:inherit}
+.lie-import-actions{display:flex;justify-content:flex-end;margin-top:18px}.lie-import-success{display:grid;gap:12px}
+@media(max-width:700px){.lie-session-suggestion{grid-template-columns:1fr}.lie-detected-card dl div{grid-template-columns:1fr}}

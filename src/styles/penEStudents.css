@@ -1,0 +1,141 @@
+.pen-e-students-heading-count {
+  display: grid;
+  justify-items: end;
+}
+
+.pen-e-students-heading-count strong {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.pen-e-students-heading-count span {
+  margin-top: 3px;
+  font-size: 0.78rem;
+  opacity: 0.65;
+}
+
+.pen-e-students-browser,
+.pen-e-student-history-browser {
+  display: grid;
+  gap: 18px;
+}
+
+.pen-e-students-search,
+.pen-e-student-history-search {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+  gap: 10px;
+}
+
+.pen-e-students-search input,
+.pen-e-student-history-search input {
+  width: 100%;
+}
+
+.pen-e-students-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pen-e-student-history-filters {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(160px, 1fr)
+    )
+    auto;
+  gap: 10px;
+}
+
+.pen-e-student-row,
+.pen-e-student-session-row {
+  cursor: pointer;
+}
+
+.pen-e-student-row:hover,
+.pen-e-student-session-row:hover {
+  background: #f8f9fc;
+}
+
+.pen-e-student-row:focus,
+.pen-e-student-session-row:focus {
+  outline: 2px solid currentColor;
+  outline-offset: -2px;
+}
+
+.pen-e-students-table td:first-child,
+.pen-e-student-history-table td:first-child {
+  display: grid;
+  gap: 2px;
+}
+
+.pen-e-students-table small,
+.pen-e-student-history-table small {
+  opacity: 0.62;
+}
+
+.pen-e-student-metric-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      4,
+      minmax(0, 1fr)
+    );
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.pen-e-student-metric {
+  display: grid;
+  gap: 5px;
+
+  padding: 18px;
+
+  border: 1px solid var(--aeos-border);
+  border-radius: 16px;
+
+  background: #fff;
+}
+
+.pen-e-student-metric strong {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.pen-e-student-metric span {
+  font-size: 0.82rem;
+  opacity: 0.68;
+}
+
+@media (max-width: 1000px) {
+  .pen-e-student-metric-grid {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .pen-e-student-history-filters {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+}
+
+@media (max-width: 700px) {
+  .pen-e-students-search,
+  .pen-e-student-history-search,
+  .pen-e-student-history-filters,
+  .pen-e-student-metric-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+

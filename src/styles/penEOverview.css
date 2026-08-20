@@ -1,0 +1,278 @@
+.pen-e-overview-heading {
+  margin-bottom: 22px;
+}
+
+.pen-e-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    3,
+    minmax(0, 1fr)
+  );
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.pen-e-metric-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  min-height: 132px;
+  padding: 20px;
+
+  background: #ffffff;
+  border: 1px solid var(--aeos-border);
+  border-radius: 18px;
+}
+
+.pen-e-metric-icon {
+  display: grid;
+  place-items: center;
+
+  width: 52px;
+  height: 52px;
+
+  flex: 0 0 52px;
+
+  border-radius: 14px;
+  background: #f4f6fb;
+
+  font-size: 1.45rem;
+  font-weight: 700;
+}
+
+.pen-e-metric-card > div:last-child {
+  display: grid;
+  gap: 3px;
+}
+
+.pen-e-metric-value {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.pen-e-metric-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.pen-e-metric-card small {
+  opacity: 0.68;
+}
+
+.pen-e-processing-card {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+
+  gap: 18px 28px;
+  align-items: center;
+
+  margin-bottom: 26px;
+}
+
+.pen-e-processing-card h3 {
+  margin-bottom: 6px;
+}
+
+.pen-e-processing-card p {
+  margin: 0;
+}
+
+.pen-e-coverage-display {
+  display: grid;
+  justify-items: end;
+}
+
+.pen-e-coverage-display strong {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.pen-e-coverage-display span {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  opacity: 0.68;
+}
+
+.pen-e-coverage-track {
+  grid-column: 1 / -1;
+
+  height: 8px;
+
+  overflow: hidden;
+
+  border-radius: 999px;
+  background: #edf0f5;
+}
+
+.pen-e-coverage-track span {
+  display: block;
+  height: 100%;
+
+  border-radius: inherit;
+
+  background: currentColor;
+}
+
+.pen-e-processing-summary {
+  grid-column: 1 / -1;
+
+  display: flex;
+  gap: 28px;
+}
+
+.pen-e-processing-summary span {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+
+  font-size: 0.85rem;
+}
+
+.pen-e-processing-summary strong {
+  font-size: 1rem;
+}
+
+.pen-e-navigation-section {
+  margin-top: 12px;
+}
+
+.pen-e-navigation-grid {
+  display: grid;
+
+  grid-template-columns: repeat(
+    2,
+    minmax(0, 1fr)
+  );
+
+  gap: 16px;
+}
+
+.pen-e-nav-card {
+  display: grid;
+  gap: 18px;
+
+  min-height: 240px;
+  padding: 22px;
+
+  color: inherit;
+  text-decoration: none;
+
+  background: #ffffff;
+  border: 1px solid var(--aeos-border);
+  border-radius: 20px;
+
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease;
+}
+
+.pen-e-nav-card:not(.disabled):hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 12px 30px
+    rgba(20, 28, 48, 0.08);
+}
+
+.pen-e-nav-card.disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.pen-e-nav-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.pen-e-nav-card-icon {
+  display: grid;
+  place-items: center;
+
+  width: 54px;
+  height: 54px;
+
+  border-radius: 15px;
+  background: #f4f6fb;
+
+  font-size: 1.5rem;
+}
+
+.pen-e-nav-card-count {
+  display: grid;
+  justify-items: end;
+}
+
+.pen-e-nav-card-count strong {
+  font-size: 1.65rem;
+}
+
+.pen-e-nav-card-count span {
+  font-size: 0.75rem;
+  opacity: 0.65;
+}
+
+.pen-e-nav-card-copy {
+  align-self: end;
+}
+
+.pen-e-nav-card-copy h3 {
+  margin: 4px 0 7px;
+  font-size: 1.25rem;
+}
+
+.pen-e-nav-card-copy > p:last-child {
+  margin: 0;
+
+  max-width: 40rem;
+
+  opacity: 0.72;
+}
+
+.pen-e-nav-card-link {
+  align-self: end;
+
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+@media (max-width: 980px) {
+  .pen-e-metric-grid {
+    grid-template-columns: repeat(
+      2,
+      minmax(0, 1fr)
+    );
+  }
+}
+
+@media (max-width: 700px) {
+  .pen-e-metric-grid,
+  .pen-e-navigation-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pen-e-processing-card {
+    grid-template-columns: 1fr;
+  }
+
+  .pen-e-coverage-display {
+    justify-items: start;
+  }
+
+  .pen-e-coverage-track,
+  .pen-e-processing-summary {
+    grid-column: auto;
+  }
+
+  .pen-e-processing-summary {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+
