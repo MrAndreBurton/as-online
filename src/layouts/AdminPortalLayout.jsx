@@ -10,6 +10,7 @@ const links = [
   ["/portal/admin/transcripts", "Learning Intake"],
   ["/portal/admin/curriculum", "Curriculum"],
   ["/portal/admin/pen-e", "Pen-E"],
+  ["/portal/admin/reports", "Reports"],
 ];
 
 export default function AdminPortalLayout() {

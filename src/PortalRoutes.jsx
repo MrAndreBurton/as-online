@@ -35,6 +35,10 @@ import PenEReviewPage from "./pages/portal/admin/PenEReviewPage";
 import PenETutorsPage from "./pages/portal/admin/PenETutorsPage";
 import PenETutorHistoryPage from "./pages/portal/admin/PenETutorHistoryPage";
 
+import ReportsPage from "./pages/portal/admin/ReportsPage";
+import StudentReportsPage from "./pages/portal/admin/StudentReportsPage";
+import StudentReportCenterPage from "./pages/portal/admin/StudentReportCenterPage";
+import StudentReportWorkspacePage from "./pages/portal/admin/StudentReportWorkspacePage";
 
 export function PortalRoutes() {
   return <>
@@ -148,6 +152,25 @@ export function PortalRoutes() {
   element={<PenETutorHistoryPage />}
 />
 
+<Route
+  path="reports"
+  element={<ReportsPage />}
+/>
+
+<Route
+  path="reports/students"
+  element={<StudentReportsPage />}
+/>
+
+<Route
+  path="reports/students/:studentId"
+  element={<StudentReportCenterPage />}
+/>
+
+<Route
+  path="reports/student/:reportId"
+  element={<StudentReportWorkspacePage />}
+/>
 
 </Route>
   </>;
