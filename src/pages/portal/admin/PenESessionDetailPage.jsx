@@ -17,6 +17,8 @@ import {
 
 import {
   fetchPenEAnalysisRun,
+  fetchPenETranscriptScope,
+  reanalysePenETranscript,
   reviewPenESuggestion,
 } from "../../../lib/penEAnalysis";
 
@@ -146,6 +148,91 @@ function evidenceGroupOrder(
   return (
     order[label] ?? 99
   );
+}
+
+function runStatusLabel(
+  status
+) {
+  switch (status) {
+    case "completed":
+      return "Completed";
+
+    case "failed":
+      return "Failed";
+
+    case "running":
+      return "Running";
+
+    case "queued":
+      return "Queued";
+
+    default:
+      return status || "Unknown";
+  }
+}
+
+/*
+ * ==================================================
+ * Curriculum deep-link
+ * ==================================================
+ *
+ * Pen-E must link into the curriculum using the
+ * effective ANALYSIS scope, not merely the student's
+ * current offering.
+ *
+ * Example:
+ *
+ * /portal/admin/curriculum
+ *   ?programme=PRI
+ *   &subject=MATH
+ *   &level=STD4
+ *   &node=CUR-0294
+ */
+
+function buildCurriculumLink(
+  curriculumNodeId,
+  analysisScope
+) {
+  if (!curriculumNodeId) {
+    return "/portal/admin/curriculum";
+  }
+
+  const params =
+    new URLSearchParams();
+
+  if (
+    analysisScope?.programme_id
+  ) {
+    params.set(
+      "programme",
+      analysisScope.programme_id
+    );
+  }
+
+  if (
+    analysisScope?.subject_id
+  ) {
+    params.set(
+      "subject",
+      analysisScope.subject_id
+    );
+  }
+
+  if (
+    analysisScope?.effective_level_id
+  ) {
+    params.set(
+      "level",
+      analysisScope.effective_level_id
+    );
+  }
+
+  params.set(
+    "node",
+    curriculumNodeId
+  );
+
+  return `/portal/admin/curriculum?${params.toString()}`;
 }
 
 function ReviewButtons({
@@ -407,13 +494,20 @@ function ActionCard({
 export default function PenESessionDetailPage() {
   const { sessionId } =
     useParams();
-  const navigate = useNavigate();
+
+  const navigate =
+    useNavigate();
 
   const [detail, setDetail] =
     useState(null);
 
   const [analysis, setAnalysis] =
     useState(null);
+
+  const [
+    analysisScope,
+    setAnalysisScope,
+  ] = useState(null);
 
   const [
     selectedRunId,
@@ -428,6 +522,21 @@ export default function PenESessionDetailPage() {
     setLoadingAnalysis,
   ] = useState(false);
 
+  const [
+    reanalysing,
+    setReanalysing,
+  ] = useState(false);
+
+  const [
+    reanalysisError,
+    setReanalysisError,
+  ] = useState("");
+
+  const [
+    reanalysisMessage,
+    setReanalysisMessage,
+  ] = useState("");
+
   const [error, setError] =
     useState("");
 
@@ -436,6 +545,8 @@ export default function PenESessionDetailPage() {
       async (runId) => {
         if (!runId) {
           setAnalysis(null);
+          setAnalysisScope(null);
+          setSelectedRunId("");
           return;
         }
 
@@ -453,6 +564,22 @@ export default function PenESessionDetailPage() {
           setSelectedRunId(
             runId
           );
+
+          try {
+            const scope =
+              await fetchPenETranscriptScope(
+                next.run
+                  .intake_item_id
+              );
+
+            setAnalysisScope(
+              scope
+            );
+          } catch {
+            setAnalysisScope(
+              null
+            );
+          }
         } catch (err) {
           setError(
             err.message
@@ -489,6 +616,9 @@ export default function PenESessionDetailPage() {
           );
         } else {
           setAnalysis(null);
+          setAnalysisScope(
+            null
+          );
           setSelectedRunId("");
         }
       } catch (err) {
@@ -515,6 +645,80 @@ export default function PenESessionDetailPage() {
     await loadAnalysis(
       selectedRunId
     );
+  }
+
+  async function handleReanalyse() {
+    const intakeItemId =
+      analysis?.run
+        ?.intake_item_id ||
+      detail
+        ?.latestCompletedRun
+        ?.intake_item_id ||
+      detail?.runs?.find(
+        (run) =>
+          run.intake_item_id
+      )?.intake_item_id;
+
+    if (!intakeItemId) {
+      setReanalysisError(
+        "No transcript intake item is linked to this session."
+      );
+
+      return;
+    }
+
+    setReanalysing(true);
+    setReanalysisError("");
+    setReanalysisMessage("");
+
+    try {
+      const result =
+        await reanalysePenETranscript(
+          intakeItemId
+        );
+
+      const next =
+        await fetchPenESessionDetail(
+          sessionId
+        );
+
+      setDetail(next);
+
+      const newRunId =
+        result.analysisRunId ||
+        next
+          .latestCompletedRun
+          ?.analysis_run_id;
+
+      if (newRunId) {
+        await loadAnalysis(
+          newRunId
+        );
+      }
+
+      setReanalysisMessage(
+        "Transcript reanalysis completed. The previous analysis remains in the run history."
+      );
+    } catch (err) {
+      setReanalysisError(
+        err.message ||
+          "Transcript reanalysis failed."
+      );
+
+      try {
+        const next =
+          await fetchPenESessionDetail(
+            sessionId
+          );
+
+        setDetail(next);
+      } catch {
+        // Preserve original
+        // reanalysis error.
+      }
+    } finally {
+      setReanalysing(false);
+    }
   }
 
   const reviewStats =
@@ -681,7 +885,9 @@ export default function PenESessionDetailPage() {
       <button
         type="button"
         className="aeos-back-link aeos-back-button"
-        onClick={() => navigate(-1)}
+        onClick={() =>
+          navigate(-1)
+        }
       >
         ← Back
       </button>
@@ -706,7 +912,9 @@ export default function PenESessionDetailPage() {
 
           <div className="pen-e-session-context-line">
             <span>
-              {formatDate(date)}
+              {formatDate(
+                date
+              )}
             </span>
 
             <span>
@@ -726,6 +934,40 @@ export default function PenESessionDetailPage() {
               )}
             </span>
           </div>
+
+          {analysisScope ? (
+            <div className="pen-e-analysis-scope">
+              <span>
+                Analysed level:{" "}
+                <strong>
+                  {
+                    analysisScope.effective_level_id
+                  }
+                </strong>
+              </span>
+
+              {analysisScope
+                .resolution_method ===
+              "historical_source_level" ? (
+                <span className="status-pill">
+                  Historical
+                  session level
+                </span>
+              ) : null}
+
+              {analysisScope
+                .candidate_count !==
+              undefined ? (
+                <span>
+                  {
+                    analysisScope.candidate_count
+                  }{" "}
+                  curriculum
+                  candidates
+                </span>
+              ) : null}
+            </div>
+          ) : null}
         </div>
 
         <div className="pen-e-session-heading-status">
@@ -764,6 +1006,34 @@ export default function PenESessionDetailPage() {
       {error ? (
         <div className="portal-alert">
           {error}
+        </div>
+      ) : null}
+
+      {reanalysisMessage ? (
+        <div className="portal-alert success">
+          {
+            reanalysisMessage
+          }
+        </div>
+      ) : null}
+
+      {reanalysisError ? (
+        <div className="portal-alert">
+          <strong>
+            Reanalysis failed.
+          </strong>
+
+          <p>
+            {
+              reanalysisError
+            }
+          </p>
+
+          <small>
+            The previous completed
+            analysis has not been
+            changed.
+          </small>
         </div>
       ) : null}
 
@@ -819,7 +1089,8 @@ export default function PenESessionDetailPage() {
                   "Manual"
                     ? "Manual Pen-E"
                     : analysis.run
-                        .model_name}
+                        .model_name ||
+                      "Pen-E"}
                 </strong>
               </div>
 
@@ -835,6 +1106,23 @@ export default function PenESessionDetailPage() {
                   }
                 </strong>
               </div>
+            </div>
+
+            <div className="pen-e-analysis-controls">
+              <button
+                type="button"
+                className="aeos-button-secondary"
+                disabled={
+                  reanalysing
+                }
+                onClick={
+                  handleReanalyse
+                }
+              >
+                {reanalysing
+                  ? "Reanalysing…"
+                  : "Reanalyse Transcript"}
+              </button>
             </div>
           </section>
 
@@ -912,7 +1200,8 @@ export default function PenESessionDetailPage() {
                 </p>
 
                 <h3>
-                  Curriculum Matches
+                  Curriculum
+                  Matches
                 </h3>
               </div>
 
@@ -928,75 +1217,120 @@ export default function PenESessionDetailPage() {
               .length ? (
               <div className="pen-e-suggestion-list">
                 {analysis.curriculum.map(
-                  (item) => (
-                    <article
-                      key={
-                        item.curriculum_suggestion_id
-                      }
-                      className="pen-e-intelligence-item"
-                    >
-                      <div className="pen-e-intelligence-copy">
-                        <strong>
-                          {item.node
-                            ?.node_name ||
-                            item.curriculum_node_id}
-                        </strong>
+                  (item) => {
+                    const curriculumUrl =
+                      buildCurriculumLink(
+                        item.curriculum_node_id,
+                        analysisScope
+                      );
 
-                        <div className="pen-e-intelligence-meta">
-                          <span>
-                            {item.confidence}%
-                            confidence
-                          </span>
-                        </div>
-
-                        {item.explanation ? (
-                          <p>
-                            {
-                              item.explanation
-                            }
-                          </p>
-                        ) : null}
-
-                        {item.source_excerpt ? (
-                          <details className="pen-e-source-details">
-                            <summary>
-                              View transcript
-                              evidence
-                            </summary>
-
-                            <blockquote>
-                              {
-                                item.source_excerpt
-                              }
-                            </blockquote>
-
-                            {item.source_timestamp ? (
-                              <small>
-                                Transcript
-                                time:{" "}
-                                {
-                                  item.source_timestamp
-                                }
-                              </small>
-                            ) : null}
-                          </details>
-                        ) : null}
-                      </div>
-
-                      <ReviewButtons
-                        table="curriculum"
-                        id={
+                    return (
+                      <article
+                        key={
                           item.curriculum_suggestion_id
                         }
-                        status={
-                          item.review_status
-                        }
-                        onChanged={
-                          refreshAnalysis
-                        }
-                      />
-                    </article>
-                  )
+                        className="pen-e-intelligence-item"
+                      >
+                        <div className="pen-e-intelligence-copy">
+                          <div className="pen-e-curriculum-match-heading">
+                            <div>
+                              <strong>
+                                {item.node
+                                  ?.node_name ||
+                                  item.curriculum_node_id}
+                              </strong>
+
+                              <small className="pen-e-curriculum-node-id">
+                                {
+                                  item.curriculum_node_id
+                                }
+                              </small>
+                            </div>
+
+                            <Link
+                              className="pen-e-curriculum-link"
+                              to={
+                                curriculumUrl
+                              }
+                            >
+                              View in Curriculum
+                              <span
+                                aria-hidden="true"
+                              >
+                                →
+                              </span>
+                            </Link>
+                          </div>
+
+                          <div className="pen-e-intelligence-meta">
+                            <span>
+                              {
+                                item.confidence
+                              }
+                              % confidence
+                            </span>
+
+                            {analysisScope
+                              ?.effective_level_id ? (
+                              <span>
+                                Scope:{" "}
+                                {
+                                  analysisScope.effective_level_id
+                                }
+                              </span>
+                            ) : null}
+                          </div>
+
+                          {item.explanation ? (
+                            <p>
+                              {
+                                item.explanation
+                              }
+                            </p>
+                          ) : null}
+
+                          {item.source_excerpt ? (
+                            <details className="pen-e-source-details">
+                              <summary>
+                                View
+                                transcript
+                                evidence
+                              </summary>
+
+                              <blockquote>
+                                {
+                                  item.source_excerpt
+                                }
+                              </blockquote>
+
+                              {item.source_timestamp ? (
+                                <small>
+                                  Transcript
+                                  time:{" "}
+                                  {
+                                    item.source_timestamp
+                                  }
+                                </small>
+                              ) : null}
+                            </details>
+                          ) : null}
+                        </div>
+
+                        <ReviewButtons
+                          table="curriculum"
+                          id={
+                            item.curriculum_suggestion_id
+                          }
+                          status={
+                            item.review_status
+                          }
+                          onChanged={
+                            refreshAnalysis
+                          }
+                        />
+                      </article>
+                    );
+                  }
                 )}
               </div>
             ) : (
@@ -1007,11 +1341,10 @@ export default function PenESessionDetailPage() {
                 </p>
 
                 <small>
-                  Curriculum
-                  intelligence will
-                  become more detailed
-                  as AEOS curriculum
-                  nodes are expanded.
+                  No canonical
+                  curriculum matches
+                  were identified for
+                  this analysis run.
                 </small>
               </div>
             )}
@@ -1021,11 +1354,13 @@ export default function PenESessionDetailPage() {
             <div className="aeos-section-heading">
               <div>
                 <p className="portal-eyebrow">
-                  Learning Intelligence
+                  Learning
+                  Intelligence
                 </p>
 
                 <h3>
-                  Learning Evidence
+                  Learning
+                  Evidence
                 </h3>
               </div>
 
@@ -1205,73 +1540,127 @@ export default function PenESessionDetailPage() {
 
           <span>
             {
-              detail
-                .completedRuns
-                .length
+              detail.runs.length
             }{" "}
-            completed
+            {detail.runs.length ===
+            1
+              ? "run"
+              : "runs"}
           </span>
         </div>
 
-        {detail.completedRuns.length ? (
+        {detail.runs.length ? (
           <div className="pen-e-analysis-history-list">
-            {detail.completedRuns.map(
-              (run, index) => (
-                <button
-                  key={
-                    run.analysis_run_id
-                  }
-                  type="button"
-                  className={
-                    selectedRunId ===
-                    run.analysis_run_id
-                      ? "active"
-                      : ""
-                  }
-                  onClick={() =>
-                    loadAnalysis(
+            {detail.runs.map(
+              (run, index) => {
+                const completed =
+                  run.run_status ===
+                  "completed";
+
+                const failed =
+                  run.run_status ===
+                  "failed";
+
+                const current =
+                  completed &&
+                  run.analysis_run_id ===
+                    detail
+                      .latestCompletedRun
+                      ?.analysis_run_id;
+
+                return (
+                  <button
+                    key={
                       run.analysis_run_id
-                    )
-                  }
-                >
-                  <div>
-                    <strong>
-                      {index === 0
-                        ? "Current Analysis"
-                        : `Previous Analysis ${index}`}
-                    </strong>
-
-                    <span>
-                      {
-                        run.model_provider
+                    }
+                    type="button"
+                    className={[
+                      selectedRunId ===
+                      run.analysis_run_id
+                        ? "active"
+                        : "",
+                      failed
+                        ? "failed"
+                        : "",
+                    ]
+                      .filter(
+                        Boolean
+                      )
+                      .join(" ")}
+                    disabled={
+                      !completed
+                    }
+                    onClick={() => {
+                      if (
+                        completed
+                      ) {
+                        loadAnalysis(
+                          run.analysis_run_id
+                        );
                       }
-                      {" · "}
-                      {
-                        run.prompt_version
-                      }
-                    </span>
-                  </div>
+                    }}
+                  >
+                    <div>
+                      <strong>
+                        {current
+                          ? "Current Analysis"
+                          : `Analysis Run ${
+                              detail
+                                .runs
+                                .length -
+                              index
+                            }`}
+                      </strong>
 
-                  <small>
-                    {formatDateTime(
-                      run.completed_at ||
-                        run.created_at
-                    )}
-                  </small>
-                </button>
-              )
+                      <span>
+                        {
+                          run.model_provider
+                        }
+                        {" · "}
+                        {
+                          run.prompt_version
+                        }
+                      </span>
+
+                      <span
+                        className={`pen-e-run-status ${run.run_status}`}
+                      >
+                        {runStatusLabel(
+                          run.run_status
+                        )}
+                      </span>
+
+                      {failed &&
+                      run.error_message ? (
+                        <small>
+                          {
+                            run.error_message
+                          }
+                        </small>
+                      ) : null}
+                    </div>
+
+                    <small>
+                      {formatDateTime(
+                        run.completed_at ||
+                          run.created_at
+                      )}
+                    </small>
+                  </button>
+                );
+              }
             )}
           </div>
         ) : (
           <div className="aeos-empty-state">
             <h3>
-              No Pen-E analysis yet
+              No Pen-E analysis
+              yet
             </h3>
 
             <p>
               This session has not
-              yet received a
-              completed Pen-E
+              yet received a Pen-E
               analysis.
             </p>
           </div>
@@ -1287,7 +1676,8 @@ export default function PenESessionDetailPage() {
               </p>
 
               <h3>
-                Analysis Information
+                Analysis
+                Information
               </h3>
             </div>
           </div>
@@ -1334,6 +1724,19 @@ export default function PenESessionDetailPage() {
 
             <div>
               <dt>
+                Status
+              </dt>
+
+              <dd>
+                {runStatusLabel(
+                  analysis.run
+                    .run_status
+                )}
+              </dd>
+            </div>
+
+            <div>
+              <dt>
                 Completed
               </dt>
 
@@ -1344,23 +1747,65 @@ export default function PenESessionDetailPage() {
                 )}
               </dd>
             </div>
+
+            {analysisScope ? (
+              <>
+                <div>
+                  <dt>
+                    Analysis Level
+                  </dt>
+
+                  <dd>
+                    {
+                      analysisScope.effective_level_id
+                    }
+                  </dd>
+                </div>
+
+                <div>
+                  <dt>
+                    Scope Method
+                  </dt>
+
+                  <dd>
+                    {
+                      analysisScope.resolution_method
+                    }
+                  </dd>
+                </div>
+
+                <div>
+                  <dt>
+                    Candidate Set
+                  </dt>
+
+                  <dd>
+                    {
+                      analysisScope.candidate_count
+                    }
+                  </dd>
+                </div>
+              </>
+            ) : null}
           </dl>
 
           <div className="pen-e-source-footer">
             <p>
-              The original transcript
-              remains in Learning
-              Intake. Pen-E displays the
+              The original
+              transcript remains in
+              Learning Intake.
+              Pen-E displays the
               interpreted learning
-              intelligence produced from
-              that source.
+              intelligence produced
+              from that source.
             </p>
 
             <Link
               className="aeos-button-secondary"
               to="/portal/admin/transcripts"
             >
-              View Learning Intake
+              View Learning
+              Intake
             </Link>
           </div>
         </section>
@@ -1368,4 +1813,5 @@ export default function PenESessionDetailPage() {
     </>
   );
 }
+
 

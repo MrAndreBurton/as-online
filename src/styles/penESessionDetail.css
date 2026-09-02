@@ -376,6 +376,136 @@
   cursor: pointer;
 }
 
+.pen-e-analysis-scope {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+
+  margin-top: 12px;
+
+  font-size: 0.82rem;
+  opacity: 0.78;
+}
+
+.pen-e-analysis-controls {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  margin-top: 16px;
+}
+
+.pen-e-analysis-controls button {
+  white-space: nowrap;
+}
+
+.pen-e-run-status {
+  display: inline-flex;
+  align-items: center;
+
+  width: fit-content;
+
+  margin-top: 3px;
+
+  padding: 3px 8px;
+
+  border-radius: 999px;
+
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1.2;
+
+  opacity: 1 !important;
+}
+
+.pen-e-run-status.completed {
+  background: #edf7f0;
+  color: #287044;
+}
+
+.pen-e-run-status.failed {
+  background: #fff0f0;
+  color: #a23434;
+}
+
+.pen-e-run-status.running,
+.pen-e-run-status.queued {
+  background: #fff7df;
+  color: #7a5a00;
+}
+
+.pen-e-analysis-history-list button.failed {
+  background: #fffafa;
+}
+
+.pen-e-analysis-history-list button.failed:hover {
+  background: #fffafa;
+}
+
+.pen-e-analysis-history-list button:disabled {
+  cursor: default;
+  opacity: 0.82;
+}
+
+.pen-e-analysis-history-list button:disabled:hover {
+  background: inherit;
+}
+
+.pen-e-analysis-history-list button.failed small {
+  max-width: 620px;
+
+  overflow-wrap: anywhere;
+
+  color: #8f3535;
+  opacity: 0.88;
+}
+
+.portal-alert.success {
+  border-color: #bddfc9;
+  background: #f3fbf6;
+}
+
+.portal-alert.success strong,
+.portal-alert.success p,
+.portal-alert.success small {
+  color: #28633d;
+}
+
+@media (max-width: 850px) {
+  .pen-e-analysis-controls {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 700px) {
+  .pen-e-analysis-scope {
+    align-items: flex-start;
+  }
+
+  .pen-e-analysis-controls {
+    width: 100%;
+  }
+
+  .pen-e-analysis-controls button {
+    width: 100%;
+  }
+}
+
+
+.pen-e-analysis-controls {
+  grid-column: 1 / -1;
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  margin-top: 0;
+  padding-top: 14px;
+
+  border-top: 1px solid var(--aeos-border);
+}
+
 
 
 

@@ -2,11 +2,18 @@ import { Route } from "react-router-dom";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import RoleRoute from "./components/auth/RoleRoute";
 import PortalEntry from "./components/auth/PortalEntry";
+
 import StudentPortalLayout from "./layouts/StudentPortalLayout";
 import AdminPortalLayout from "./layouts/AdminPortalLayout";
+
 import StudentDashboard from "./pages/portal/student/StudentDashboard";
-import AdminDashboard from "./pages/portal/admin/AdminDashboard";
+import StudentLearningPage from "./pages/portal/student/StudentLearningPage";
+import StudentPenEPage from "./pages/portal/student/StudentPenEPage";
+import StudentSessionsPage from "./pages/portal/student/StudentSessionsPage";
+import StudentSessionDetailPage from "./pages/portal/student/StudentSessionDetailPage";
 import StudentPlaceholder from "./pages/portal/student/StudentPlaceholder";
+
+import AdminDashboard from "./pages/portal/admin/AdminDashboard";
 import AdminPlaceholder from "./pages/portal/admin/AdminPlaceholder";
 
 import StudentsPage from "./pages/portal/admin/StudentsPage";
@@ -39,139 +46,194 @@ import ReportsPage from "./pages/portal/admin/ReportsPage";
 import StudentReportsPage from "./pages/portal/admin/StudentReportsPage";
 import StudentReportCenterPage from "./pages/portal/admin/StudentReportCenterPage";
 import StudentReportWorkspacePage from "./pages/portal/admin/StudentReportWorkspacePage";
+import StudentHomeworkPage from "./pages/portal/student/StudentHomeworkPage";
+
+import CurriculumPage from "./pages/portal/admin/CurriculumPage";
 
 export function PortalRoutes() {
-  return <>
-    <Route path="/portal" element={<ProtectedRoute><PortalEntry /></ProtectedRoute>} />
-
-    <Route path="/portal/student" element={<ProtectedRoute><RoleRoute role="student"><StudentPortalLayout /></RoleRoute></ProtectedRoute>}>
-      <Route index element={<StudentDashboard />} />
-      <Route path="sessions" element={<StudentPlaceholder title="My Sessions" copy="Your completed and upcoming tutoring sessions will live here." />} />
-      <Route path="learning" element={<StudentPlaceholder title="My Learning" copy="AEOS mastery, Learning Nodes and subject progress will appear here." />} />
-      <Route path="homework" element={<StudentPlaceholder title="Homework" copy="Assigned practice and due dates will appear here." />} />
-      <Route path="pen-e" element={<StudentPlaceholder title="Pen-E & Me" copy="This becomes the student's personal AI learning space." />} />
-    </Route>
-
-    <Route
-  path="/portal/admin"
-  element={
-    <ProtectedRoute>
-      <RoleRoute role="admin_tutor">
-        <AdminPortalLayout />
-      </RoleRoute>
-    </ProtectedRoute>
-  }
->
-  <Route index element={<AdminDashboard />} />
-
-  <Route path="students" element={<StudentsPage />} />
-
-  <Route
-    path="students/:studentId"
-    element={<StudentProfilePage />}
-  />
-
-  <Route path="calendar" element={<CalendarPage />} />
-
-  <Route path="sessions" element={<SessionsPage />} />
-
-  <Route
-    path="sessions/:sessionId"
-    element={<SessionWorkspacePage />}
-  />
-
-  <Route
-    path="transcripts"
-    element={<TranscriptAutomationPage />}
-  />
-
-  <Route
-    path="evidence"
-    element={
-      <AdminPlaceholder
-        title="Evidence Review"
-        copy="Suggested learning evidence will be approved here."
+  return (
+    <>
+      <Route
+        path="/portal"
+        element={
+          <ProtectedRoute>
+            <PortalEntry />
+          </ProtectedRoute>
+        }
       />
-    }
-  />
 
-  <Route
-    path="curriculum"
-    element={
-      <AdminPlaceholder
-        title="Curriculum"
-        copy="AEOS Subjects, Offerings, Learning Nodes and Profiles will be managed here."
-      />
-    }
-  />
+      <Route
+        path="/portal/student"
+        element={
+          <ProtectedRoute>
+            <RoleRoute role="student">
+              <StudentPortalLayout />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      >
+        <Route
+          index
+          element={<StudentDashboard />}
+        />
 
-  <Route path="pen-e" element={<PenEPage />} />
+        <Route
+          path="sessions"
+          element={<StudentSessionsPage />}
+        />
 
-  <Route
-  path="pen-e/sessions"
-  element={<PenESessionsPage />}
-/>
+        <Route
+          path="sessions/:sessionId"
+          element={<StudentSessionDetailPage />}
+        />
 
-<Route
-  path="pen-e/sessions/:sessionId"
-  element={<PenESessionDetailPage />}
-/>
+        <Route
+          path="learning"
+          element={<StudentLearningPage />}
+        />
 
-<Route
-  path="pen-e/analyze"
-  element={<PenEAnalyzePage />}
-/>
+        <Route
+          path="homework"
+          element={<StudentHomeworkPage />}
+        />
 
-<Route
-  path="pen-e/analyze/:intakeItemId"
-  element={<PenEAnalyzeWorkspacePage />}
-/>
+        <Route
+          path="pen-e"
+          element={<StudentPenEPage />}
+        />
+      </Route>
 
-<Route
-  path="pen-e/students"
-  element={<PenEStudentsPage />}
-/>
+      <Route
+        path="/portal/admin"
+        element={
+          <ProtectedRoute>
+            <RoleRoute role="admin_tutor">
+              <AdminPortalLayout />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      >
+        <Route
+          index
+          element={<AdminDashboard />}
+        />
 
-<Route
-  path="pen-e/students/:studentId"
-  element={<PenEStudentHistoryPage />}
-/>
+        <Route
+          path="students"
+          element={<StudentsPage />}
+        />
 
-<Route
-  path="pen-e/review"
-  element={<PenEReviewPage />}
-/>
+        <Route
+          path="students/:studentId"
+          element={<StudentProfilePage />}
+        />
 
-<Route
-  path="pen-e/tutors"
-  element={<PenETutorsPage />}
-/>
+        <Route
+          path="calendar"
+          element={<CalendarPage />}
+        />
 
-<Route
-  path="pen-e/tutors/:tutorUserId"
-  element={<PenETutorHistoryPage />}
-/>
+        <Route
+          path="sessions"
+          element={<SessionsPage />}
+        />
 
-<Route
-  path="reports"
-  element={<ReportsPage />}
-/>
+        <Route
+          path="sessions/:sessionId"
+          element={<SessionWorkspacePage />}
+        />
 
-<Route
-  path="reports/students"
-  element={<StudentReportsPage />}
-/>
+        <Route
+          path="transcripts"
+          element={<TranscriptAutomationPage />}
+        />
 
-<Route
-  path="reports/students/:studentId"
-  element={<StudentReportCenterPage />}
-/>
+        <Route
+          path="evidence"
+          element={
+            <AdminPlaceholder
+              title="Evidence Review"
+              copy="Suggested learning evidence will be approved here."
+            />
+          }
+        />
 
-<Route
-  path="reports/student/:reportId"
-  element={<StudentReportWorkspacePage />}
-/>
+        <Route
+          path="curriculum"
+          element={<CurriculumPage />}
+        />
 
-</Route>
-  </>;
+        <Route
+          path="pen-e"
+          element={<PenEPage />}
+        />
+
+        <Route
+          path="pen-e/sessions"
+          element={<PenESessionsPage />}
+        />
+
+        <Route
+          path="pen-e/sessions/:sessionId"
+          element={<PenESessionDetailPage />}
+        />
+
+        <Route
+          path="pen-e/analyze"
+          element={<PenEAnalyzePage />}
+        />
+
+        <Route
+          path="pen-e/analyze/:intakeItemId"
+          element={<PenEAnalyzeWorkspacePage />}
+        />
+
+        <Route
+          path="pen-e/students"
+          element={<PenEStudentsPage />}
+        />
+
+        <Route
+          path="pen-e/students/:studentId"
+          element={<PenEStudentHistoryPage />}
+        />
+
+        <Route
+          path="pen-e/review"
+          element={<PenEReviewPage />}
+        />
+
+        <Route
+          path="pen-e/tutors"
+          element={<PenETutorsPage />}
+        />
+
+        <Route
+          path="pen-e/tutors/:tutorUserId"
+          element={<PenETutorHistoryPage />}
+        />
+
+        <Route
+          path="reports"
+          element={<ReportsPage />}
+        />
+
+        <Route
+          path="reports/students"
+          element={<StudentReportsPage />}
+        />
+
+        <Route
+          path="reports/students/:studentId"
+          element={<StudentReportCenterPage />}
+        />
+
+        <Route
+          path="reports/student/:reportId"
+          element={<StudentReportWorkspacePage />}
+        />
+      </Route>
+    </>
+  );
 }
+
