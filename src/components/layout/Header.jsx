@@ -23,7 +23,16 @@ const navigation = [
   },
   { name: "Resources", path: "/resources" },
   { name: "Contact", path: "/contact" },
-  { name: "CountMeInTT", path: "/countmeintt", featured: true },
+  {
+    name: "CountMeInTT",
+    path: "/countmeintt",
+    featured: true,
+  },
+  {
+    name: "Portal",
+    path: "/portal",
+    portal: true,
+  },
 ];
 
 export default function Header() {
@@ -45,6 +54,7 @@ export default function Header() {
               <p className="text-lg font-semibold tracking-wide text-white">
                 A&apos;s Online
               </p>
+
               <p className="text-xs uppercase tracking-[0.3em] text-sky-300/80">
                 Modern Learning Support
               </p>
@@ -58,7 +68,9 @@ export default function Header() {
             aria-label="Toggle navigation menu"
             aria-expanded={menuOpen}
           >
-            <span className="text-lg leading-none">{menuOpen ? "✕" : "☰"}</span>
+            <span className="text-lg leading-none">
+              {menuOpen ? "✕" : "☰"}
+            </span>
           </button>
 
           <nav className="hidden items-center gap-8 md:flex">
@@ -93,9 +105,11 @@ export default function Header() {
                   key={item.name}
                   to={item.path}
                   className={
-                    item.featured
-                      ? "text-sm font-semibold text-yellow-300 transition hover:text-yellow-200"
-                      : "text-sm text-slate-200 transition hover:text-sky-300"
+                    item.portal
+                      ? "rounded-xl border border-sky-400/40 bg-sky-400/10 px-4 py-2 text-sm font-semibold text-sky-200 transition hover:border-sky-300/60 hover:bg-sky-400/20 hover:text-white"
+                      : item.featured
+                        ? "text-sm font-semibold text-yellow-300 transition hover:text-yellow-200"
+                        : "text-sm text-slate-200 transition hover:text-sky-300"
                   }
                 >
                   {item.name}
@@ -110,7 +124,10 @@ export default function Header() {
             {navigation.map((item) => {
               if (item.children) {
                 return (
-                  <div key={item.name} className="rounded-xl border border-white/10 bg-white/5">
+                  <div
+                    key={item.name}
+                    className="rounded-xl border border-white/10 bg-white/5"
+                  >
                     <button
                       type="button"
                       onClick={() => setCoursesOpen(!coursesOpen)}
@@ -147,9 +164,11 @@ export default function Header() {
                   to={item.path}
                   onClick={() => setMenuOpen(false)}
                   className={
-                    item.featured
-                      ? "rounded-xl px-4 py-3 text-sm font-semibold text-yellow-300 transition hover:bg-yellow-400/10 hover:text-yellow-200"
-                      : "rounded-xl px-4 py-3 text-sm text-slate-200 transition hover:bg-white/5 hover:text-sky-300"
+                    item.portal
+                      ? "rounded-xl border border-sky-400/30 bg-sky-400/10 px-4 py-3 text-sm font-semibold text-sky-200 transition hover:bg-sky-400/20 hover:text-white"
+                      : item.featured
+                        ? "rounded-xl px-4 py-3 text-sm font-semibold text-yellow-300 transition hover:bg-yellow-400/10 hover:text-yellow-200"
+                        : "rounded-xl px-4 py-3 text-sm text-slate-200 transition hover:bg-white/5 hover:text-sky-300"
                   }
                 >
                   {item.name}
@@ -162,4 +181,5 @@ export default function Header() {
     </header>
   );
 }
+
 
