@@ -1,15 +1,288 @@
 import { supabase } from "./supabase";
 const TRANSCRIPT_BUCKET = "aeos-transcripts";
 
-export async function fetchAdminSessions({ limit = 50 } = {}) {
-  const { data, error } = await supabase.from("aeos_sessions").select(`
-    session_id,student_user_id,tutor_user_id,offering_id,session_title,session_status,
-    scheduled_start_at,scheduled_end_at,started_at,ended_at,meeting_url,created_at,
-    student:student_profiles(user_id,first_name,last_name,display_name,school),
-    offering:aeos_offerings(offering_id,offering_name,subject:aeos_subjects(subject_id,subject_name))
-  `).order("scheduled_start_at", { ascending: false }).limit(limit);
+export async function fetchAdminSessions({
+  page = 1,
+  pageSize = 25,
+  status = "all",
+  studentId = "all",
+  offeringId = "all",
+  dateFilter = "all",
+  search = "",
+} = {}) {
+  const safePage = Math.max(1, Number(page) || 1);
+  const safePageSize = Math.max(
+    1,
+    Math.min(100, Number(pageSize) || 25)
+  );
+
+  const from = (safePage - 1) * safePageSize;
+  const to = from + safePageSize - 1;
+
+  /*
+   * Search lookup.
+   *
+   * Session title is directly searchable on aeos_sessions.
+   * Student/offering names live in related tables, so resolve
+   * their canonical IDs first.
+   */
+  const queryText = search.trim();
+
+  let matchingStudentIds = [];
+  let matchingOfferingIds = [];
+
+  if (queryText) {
+    const pattern = `%${queryText}%`;
+
+    const [
+      { data: studentMatches, error: studentError },
+      { data: offeringMatches, error: offeringError },
+    ] = await Promise.all([
+      supabase
+        .from("aeos_students")
+        .select("student_id")
+        .or(
+          [
+            `display_name.ilike.${pattern}`,
+            `first_name.ilike.${pattern}`,
+            `last_name.ilike.${pattern}`,
+            `email.ilike.${pattern}`,
+          ].join(",")
+        ),
+
+      supabase
+        .from("aeos_offerings")
+        .select("offering_id")
+        .ilike("offering_name", pattern),
+    ]);
+
+    if (studentError) throw studentError;
+    if (offeringError) throw offeringError;
+
+    matchingStudentIds = (studentMatches ?? [])
+      .map((row) => row.student_id)
+      .filter(Boolean);
+
+    matchingOfferingIds = (offeringMatches ?? [])
+      .map((row) => row.offering_id)
+      .filter(Boolean);
+  }
+
+  let query = supabase
+    .from("aeos_sessions")
+    .select(
+      `
+        session_id,
+        student_id,
+        student_user_id,
+        tutor_user_id,
+        offering_id,
+        session_title,
+        session_status,
+        scheduled_start_at,
+        scheduled_end_at,
+        started_at,
+        ended_at,
+        meeting_url,
+        created_at,
+
+        student:aeos_students(
+          student_id,
+          portal_user_id,
+          first_name,
+          last_name,
+          display_name,
+          school
+        ),
+
+        offering:aeos_offerings(
+          offering_id,
+          offering_name,
+          subject:aeos_subjects(
+            subject_id,
+            subject_name
+          )
+        )
+      `,
+      {
+        count: "exact",
+      }
+    );
+
+  /*
+   * Status.
+   */
+  if (status !== "all") {
+    query = query.eq(
+      "session_status",
+      status
+    );
+  }
+
+  /*
+   * Canonical student identity.
+   */
+  if (studentId !== "all") {
+    query = query.eq(
+      "student_id",
+      studentId
+    );
+  }
+
+  /*
+   * Offering.
+   */
+  if (offeringId !== "all") {
+    query = query.eq(
+      "offering_id",
+      offeringId
+    );
+  }
+
+  /*
+   * Date filters.
+   */
+  const now = new Date();
+
+  if (dateFilter === "upcoming") {
+    query = query.gte(
+      "scheduled_start_at",
+      now.toISOString()
+    );
+  }
+
+  if (dateFilter === "past") {
+    query = query.lt(
+      "scheduled_start_at",
+      now.toISOString()
+    );
+  }
+
+  if (dateFilter === "today") {
+    const start = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
+
+    const end = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() + 1
+    );
+
+    query = query
+      .gte(
+        "scheduled_start_at",
+        start.toISOString()
+      )
+      .lt(
+        "scheduled_start_at",
+        end.toISOString()
+      );
+  }
+
+  /*
+   * Server-side search across:
+   * - session title
+   * - canonical student matches
+   * - offering matches
+   */
+  if (queryText) {
+    const clauses = [
+      `session_title.ilike.%${queryText}%`,
+    ];
+
+    if (matchingStudentIds.length) {
+      clauses.push(
+        `student_id.in.(${matchingStudentIds.join(
+          ","
+        )})`
+      );
+    }
+
+    if (matchingOfferingIds.length) {
+      clauses.push(
+        `offering_id.in.(${matchingOfferingIds.join(
+          ","
+        )})`
+      );
+    }
+
+    query = query.or(
+      clauses.join(",")
+    );
+  }
+
+  const {
+    data,
+    error,
+    count,
+  } = await query
+    .order("scheduled_start_at", {
+      ascending: false,
+    })
+    .range(from, to);
+
   if (error) throw error;
-  return data ?? [];
+
+  return {
+    sessions: data ?? [],
+    total: count ?? 0,
+    page: safePage,
+    pageSize: safePageSize,
+  };
+}
+
+export async function fetchSessionStudentOptions() {
+  const { data, error } = await supabase
+    .from("aeos_students")
+    .select(`
+      student_id,
+      first_name,
+      last_name,
+      display_name
+    `)
+    .order("display_name", {
+      ascending: true,
+      nullsFirst: false,
+    });
+
+  if (error) throw error;
+
+  return (data ?? []).map((student) => ({
+    id: student.student_id,
+    name:
+      student.display_name ||
+      [
+        student.first_name,
+        student.last_name,
+      ]
+        .filter(Boolean)
+        .join(" ") ||
+      "Student",
+  }));
+}
+
+export async function fetchSessionOfferingOptions() {
+  const { data, error } = await supabase
+    .from("aeos_offerings")
+    .select(`
+      offering_id,
+      offering_name
+    `)
+    .order("offering_name", {
+      ascending: true,
+    });
+
+  if (error) throw error;
+
+  return (data ?? []).map((offering) => ({
+    id: offering.offering_id,
+    name:
+      offering.offering_name ||
+      offering.offering_id,
+  }));
 }
 
 export async function fetchSessionWorkspace(sessionId) {
@@ -18,6 +291,7 @@ export async function fetchSessionWorkspace(sessionId) {
       .from("aeos_sessions")
       .select(`
         session_id,
+        student_id,
         student_user_id,
         tutor_user_id,
         offering_id,
@@ -54,8 +328,9 @@ export async function fetchSessionWorkspace(sessionId) {
         created_at,
         updated_at,
 
-        student:student_profiles(
-          user_id,
+        student:aeos_students(
+          student_id,
+          portal_user_id,
           first_name,
           last_name,
           display_name,

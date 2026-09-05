@@ -18,6 +18,9 @@ import AdminPlaceholder from "./pages/portal/admin/AdminPlaceholder";
 
 import StudentsPage from "./pages/portal/admin/StudentsPage";
 import StudentProfilePage from "./pages/portal/admin/StudentProfilePage";
+import EntryDiagnosticPage from "./pages/portal/admin/EntryDiagnosticPage";
+import EntryDiagnosticReviewPage from "./pages/portal/admin/EntryDiagnosticReviewPage";
+import EntryDiagnosticReadinessPage from "./pages/portal/admin/EntryDiagnosticReadinessPage";
 
 import SessionsPage from "./pages/portal/admin/SessionsPage";
 import SessionWorkspacePage from "./pages/portal/admin/SessionWorkspacePage";
@@ -126,6 +129,21 @@ export function PortalRoutes() {
         <Route
           path="students/:studentId"
           element={<StudentProfilePage />}
+        />
+
+        <Route
+          path="students/:studentId/diagnostic/:attemptId"
+          element={<EntryDiagnosticPage />}
+        />
+
+        <Route
+          path="students/:studentId/diagnostic/:attemptId/review"
+          element={<EntryDiagnosticReviewPage />}
+        />
+
+        <Route
+          path="students/:studentId/diagnostic/:attemptId/readiness"
+          element={<EntryDiagnosticReadinessPage />}
         />
 
         <Route

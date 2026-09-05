@@ -164,6 +164,12 @@ export default function Login() {
               />
             </label>
 
+            <div className="portal-login-help">
+              <Link to="/forgot-password">
+                Forgot password?
+            </Link>
+          </div>
+
             {errorMessage ? (
               <div
                 className="login-error"

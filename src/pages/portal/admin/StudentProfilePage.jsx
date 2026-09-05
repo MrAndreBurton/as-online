@@ -12,6 +12,7 @@ import {
 
 import CreateSessionModal from "../../../components/admin/CreateSessionModal";
 import EnrolmentControls from "../../../components/admin/EnrolmentControls";
+import AiDigitalDiagnosticCard from "../../../components/admin/AiDigitalDiagnosticCard";
 
 import {
   fetchAdminStudentById,
@@ -584,6 +585,15 @@ async function inviteToPortal() {
   enrolments={data.enrolments}
   offerings={data.offerings}
   onChanged={load}
+/>
+
+<AiDigitalDiagnosticCard
+  studentId={student.student_id}
+  studentUserId={student.portal_user_id}
+  studentName={name}
+  eligible={activeEnrolments.some(
+    (enrolment) => enrolment.offering_id === "OFF-F1-AI"
+  )}
 />
 
 
