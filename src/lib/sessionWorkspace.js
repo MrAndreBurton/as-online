@@ -285,6 +285,47 @@ export async function fetchSessionOfferingOptions() {
   }));
 }
 
+export async function fetchSessionEligibleOfferings(studentId) {
+  if (!studentId) return [];
+
+  const { data, error } = await supabase
+    .from("aeos_student_enrolments")
+    .select(`
+      offering_id,
+      status,
+
+      offering:aeos_offerings(
+        offering_id,
+        offering_name,
+        subject:aeos_subjects(
+          subject_id,
+          subject_name,
+          display_name
+        )
+      )
+    `)
+    .eq("student_id", studentId)
+    .eq("status", "active");
+
+  if (error) throw error;
+
+  return (data ?? [])
+    .filter((row) => row.offering)
+    .map((row) => ({
+      id: row.offering_id,
+      name:
+        row.offering?.offering_name ||
+        row.offering_id,
+      subject:
+        row.offering?.subject?.display_name ||
+        row.offering?.subject?.subject_name ||
+        null,
+    }))
+    .sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+}
+
 export async function fetchSessionWorkspace(sessionId) {
   const results = await Promise.all([
     supabase
@@ -414,12 +455,65 @@ export async function updateSessionStatus(sessionId, nextStatus) {
   return data;
 }
 
-export async function updateSessionDetails(sessionId, values) {
-  const { data, error } = await supabase.from("aeos_sessions").update({
-    session_title: values.sessionTitle?.trim() || null,
-    meeting_url: values.meetingUrl?.trim() || null,
-  }).eq("session_id", sessionId).select().single();
+export async function updateSessionDetails(
+  sessionId,
+  values
+) {
+  if (values.offeringId) {
+    const { data: session, error: sessionError } =
+      await supabase
+        .from("aeos_sessions")
+        .select("student_id")
+        .eq("session_id", sessionId)
+        .single();
+
+    if (sessionError) throw sessionError;
+
+    const {
+      data: enrolment,
+      error: enrolmentError,
+    } = await supabase
+      .from("aeos_student_enrolments")
+      .select("enrolment_id")
+      .eq("student_id", session.student_id)
+      .eq("offering_id", values.offeringId)
+      .eq("status", "active")
+      .maybeSingle();
+
+    if (enrolmentError) throw enrolmentError;
+
+    if (!enrolment) {
+      throw new Error(
+        "This student is not actively enrolled in the selected offering."
+      );
+    }
+  }
+
+  const patch = {};
+
+  if ("sessionTitle" in values) {
+    patch.session_title =
+      values.sessionTitle?.trim() || null;
+  }
+
+  if ("meetingUrl" in values) {
+    patch.meeting_url =
+      values.meetingUrl?.trim() || null;
+  }
+
+  if (values.offeringId) {
+    patch.offering_id = values.offeringId;
+  }
+
+  const { data, error } = await supabase
+    .from("aeos_sessions")
+    .update(patch)
+    .eq("session_id", sessionId)
+    .select()
+    .single();
+
   if (error) throw error;
+
   return data;
 }
 

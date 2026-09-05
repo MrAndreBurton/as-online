@@ -7,28 +7,37 @@ import PrivateNotesPanel from "../../../components/session/PrivateNotesPanel";
 import ResourcesPanel from "../../../components/session/ResourcesPanel";
 import HomeworkPanel from "../../../components/session/HomeworkPanel";
 import TranscriptIntakePanel from "../../../components/session/TranscriptIntakePanel";
+import SeriesReconcilePanel from "../../../components/session/SeriesReconcilePanel";
 
 import {
   fetchSessionWorkspace,
+  fetchSessionEligibleOfferings,
   updateSessionDetails,
 } from "../../../lib/sessionWorkspace";
 
-import "../../../styles/sessionWorkspace.css";
+import {
+  updateGoogleSession,
+} from "../../../lib/calendarSessions";
 
-import SeriesReconcilePanel from "../../../components/session/SeriesReconcilePanel";
+import "../../../styles/sessionWorkspace.css";
 
 const studentName = (student) =>
   student?.display_name ||
-  [student?.first_name, student?.last_name].filter(Boolean).join(" ") ||
+  [student?.first_name, student?.last_name]
+    .filter(Boolean)
+    .join(" ") ||
   "Student";
 
 export default function SessionWorkspacePage() {
   const { sessionId } = useParams();
 
   const [data, setData] = useState(null);
+  const [eligibleOfferings, setEligibleOfferings] =
+    useState([]);
 
   const [details, setDetails] = useState({
     sessionTitle: "",
+    offeringId: "",
   });
 
   const [loading, setLoading] = useState(true);
@@ -41,15 +50,30 @@ export default function SessionWorkspacePage() {
     setError("");
 
     try {
-      const next = await fetchSessionWorkspace(sessionId);
+      const next =
+        await fetchSessionWorkspace(sessionId);
+
+      const offerings =
+        next.session.student_id
+          ? await fetchSessionEligibleOfferings(
+              next.session.student_id
+            )
+          : [];
 
       setData(next);
+      setEligibleOfferings(offerings);
 
       setDetails({
-        sessionTitle: next.session.session_title || "",
+        sessionTitle:
+          next.session.session_title || "",
+        offeringId:
+          next.session.offering_id || "",
       });
     } catch (err) {
-      setError(err.message);
+      setError(
+        err.message ||
+          "Unable to load Session Workspace."
+      );
     } finally {
       setLoading(false);
     }
@@ -67,22 +91,48 @@ export default function SessionWorkspacePage() {
     setMessage("");
 
     try {
-      await updateSessionDetails(sessionId, {
-        sessionTitle: details.sessionTitle,
-      });
+      const offeringChanged =
+        details.offeringId &&
+        details.offeringId !==
+          data.session.offering_id;
 
-      setMessage("Session details updated.");
+      if (offeringChanged) {
+        await updateGoogleSession({
+          sessionId,
+          offeringId: details.offeringId,
+          sessionTitle: details.sessionTitle,
+        });
+
+        setMessage(
+          "Session offering and details updated."
+        );
+      } else {
+        await updateSessionDetails(sessionId, {
+          sessionTitle: details.sessionTitle,
+        });
+
+        setMessage(
+          "Session details updated."
+        );
+      }
 
       await load();
     } catch (err) {
-      setError(err.message);
+      setError(
+        err.message ||
+          "Unable to update Session details."
+      );
     } finally {
       setSaving(false);
     }
   }
 
   if (loading) {
-    return <div className="portal-loading">Loading session…</div>;
+    return (
+      <div className="portal-loading">
+        Loading session…
+      </div>
+    );
   }
 
   if (!data) {
@@ -95,7 +145,14 @@ export default function SessionWorkspacePage() {
 
   const { session } = data;
 
-  const name = studentName(session.student);
+  const name =
+    studentName(session.student);
+
+  const currentOfferingIsEligible =
+    eligibleOfferings.some(
+      (offering) =>
+        offering.id === session.offering_id
+    );
 
   return (
     <>
@@ -113,7 +170,8 @@ export default function SessionWorkspacePage() {
           </p>
 
           <h2>
-            {session.session_title || "Tutoring Session"}
+            {session.session_title ||
+              "Tutoring Session"}
           </h2>
 
           <p>
@@ -129,7 +187,8 @@ export default function SessionWorkspacePage() {
                 ).toLocaleString()
               : "Not scheduled"}
 
-            {session.offering?.subject?.subject_name
+            {session.offering?.subject
+              ?.subject_name
               ? ` · ${session.offering.subject.subject_name}`
               : ""}
           </p>
@@ -154,7 +213,9 @@ export default function SessionWorkspacePage() {
 
       <SessionStatusControls
         sessionId={sessionId}
-        currentStatus={session.session_status}
+        currentStatus={
+          session.session_status
+        }
         onChanged={load}
       />
 
@@ -195,7 +256,8 @@ export default function SessionWorkspacePage() {
               </dt>
 
               <dd>
-                {session.student?.school || "Not recorded"}
+                {session.student?.school ||
+                  "Not recorded"}
               </dd>
             </div>
 
@@ -205,7 +267,8 @@ export default function SessionWorkspacePage() {
               </dt>
 
               <dd>
-                {session.offering?.offering_name}
+                {session.offering
+                  ?.offering_name}
               </dd>
             </div>
 
@@ -215,7 +278,9 @@ export default function SessionWorkspacePage() {
               </dt>
 
               <dd>
-                {session.offering?.subject?.subject_name}
+                {session.offering?.subject
+                  ?.subject_name ||
+                  "Not recorded"}
               </dd>
             </div>
           </dl>
@@ -235,6 +300,60 @@ export default function SessionWorkspacePage() {
             onSubmit={saveDetails}
           >
             <label>
+              Actual offering
+
+              <select
+                value={details.offeringId}
+                onChange={(event) =>
+                  setDetails((current) => ({
+                    ...current,
+                    offeringId:
+                      event.target.value,
+                  }))
+                }
+                disabled={
+                  saving ||
+                  !session.student_id
+                }
+              >
+                {!currentOfferingIsEligible &&
+                session.offering_id ? (
+                  <option
+                    value={
+                      session.offering_id
+                    }
+                    disabled
+                  >
+                    {session.offering
+                      ?.offering_name ||
+                      session.offering_id}{" "}
+                    — current
+                  </option>
+                ) : null}
+
+                {eligibleOfferings.map(
+                  (offering) => (
+                    <option
+                      key={offering.id}
+                      value={offering.id}
+                    >
+                      {offering.name}
+                      {offering.subject
+                        ? ` — ${offering.subject}`
+                        : ""}
+                    </option>
+                  )
+                )}
+              </select>
+            </label>
+
+            <p className="session-hero-meta">
+              Use the offering actually taught
+              in this session. Only active
+              enrolments are available.
+            </p>
+
+            <label>
               Session title
 
               <input
@@ -242,7 +361,8 @@ export default function SessionWorkspacePage() {
                 onChange={(event) =>
                   setDetails((current) => ({
                     ...current,
-                    sessionTitle: event.target.value,
+                    sessionTitle:
+                      event.target.value,
                   }))
                 }
                 placeholder="Optional session title"
@@ -290,4 +410,5 @@ export default function SessionWorkspacePage() {
     </>
   );
 }
+
 
