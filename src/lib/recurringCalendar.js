@@ -98,4 +98,19 @@ export function syncRecurringSeriesMetadata(
   });
 }
 
+export function deleteFutureSeries(seriesId) {
+  return invoke({
+    action: "delete_future_series",
+    seriesId,
+  });
+}
+
+export function stopFutureSeries(seriesId) {
+  return invoke({
+    action: "stop_future_series",
+    seriesId,
+  });
+}
+
+
 

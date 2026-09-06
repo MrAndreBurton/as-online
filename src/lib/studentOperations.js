@@ -47,11 +47,16 @@ export async function fetchCalendarSessions(startIso,endIso) {
   const { data, error } = await supabase
     .from("aeos_sessions")
     .select(`
-      session_id,student_id,offering_id,session_title,session_status,
+      session_id,series_id,student_id,offering_id,session_title,session_status,
       session_origin,attendance_status,scheduled_start_at,scheduled_end_at,
       started_at,ended_at,calendar_sync_requirement,google_sync_status,google_meet_url,
       student:aeos_students(student_id,display_name,first_name,last_name),
-      offering:aeos_offerings(offering_id,offering_name)
+      offering:aeos_offerings(offering_id,offering_name),
+      series:aeos_session_series!aeos_sessions_series_id_fkey(
+        series_id,
+        starts_at,
+        series_status
+      )
     `)
     .gte("scheduled_start_at",startIso)
     .lt("scheduled_start_at",endIso)

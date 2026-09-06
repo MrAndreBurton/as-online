@@ -1,16 +1,43 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext";
 import { fetchStudentSessions } from "../../../lib/studentSessions";
 
-function formatDate(value) {
-  if (!value) return "Date unavailable";
+
+/* ============================================================
+   DATE HELPERS
+   ============================================================ */
+
+function getDate(value) {
+  if (!value) return null;
 
   const date = new Date(value);
 
   if (Number.isNaN(date.getTime())) {
-    return "Date unavailable";
+    return null;
   }
+
+  return date;
+}
+
+
+function getDateKey(value) {
+  const date = getDate(value);
+
+  if (!date) return "unknown";
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+
+function formatDate(value) {
+  const date = getDate(value);
+
+  if (!date) return "Date unavailable";
 
   return new Intl.DateTimeFormat("en-TT", {
     weekday: "short",
@@ -20,14 +47,46 @@ function formatDate(value) {
   }).format(date);
 }
 
+
+function formatDayName(value) {
+  const date = getDate(value);
+
+  if (!date) return "";
+
+  return new Intl.DateTimeFormat("en-TT", {
+    weekday: "long",
+  }).format(date);
+}
+
+
+function formatDayMonth(value) {
+  const date = getDate(value);
+
+  if (!date) return "";
+
+  return new Intl.DateTimeFormat("en-TT", {
+    month: "short",
+  })
+    .format(date)
+    .toUpperCase();
+}
+
+
+function formatDayNumber(value) {
+  const date = getDate(value);
+
+  if (!date) return "";
+
+  return new Intl.DateTimeFormat("en-TT", {
+    day: "numeric",
+  }).format(date);
+}
+
+
 function formatTime(value) {
-  if (!value) return "";
+  const date = getDate(value);
 
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return "";
-  }
+  if (!date) return "";
 
   return new Intl.DateTimeFormat("en-TT", {
     hour: "numeric",
@@ -35,27 +94,46 @@ function formatTime(value) {
   }).format(date);
 }
 
+
+function isToday(value) {
+  const date = getDate(value);
+
+  if (!date) return false;
+
+  const today = new Date();
+
+  return (
+    date.getFullYear() === today.getFullYear() &&
+    date.getMonth() === today.getMonth() &&
+    date.getDate() === today.getDate()
+  );
+}
+
+
+/* ============================================================
+   UPCOMING SESSION
+   ============================================================ */
+
 function UpcomingSession({ session }) {
   return (
-    <article className="student-session-row">
-      <div className="student-session-main">
-        <p className="portal-eyebrow">
-          Upcoming
-        </p>
+    <article className="student-upcoming-session">
+      <div className="student-upcoming-session-time">
+        <strong>
+          {formatTime(session.scheduledStartAt) || "Time TBC"}
+        </strong>
 
+        <span>Scheduled</span>
+      </div>
+
+      <div className="student-upcoming-session-main">
         <strong>{session.title}</strong>
 
         <span>
-          {formatDate(session.scheduledStartAt)}
-          {session.scheduledStartAt
-            ? ` · ${formatTime(
-                session.scheduledStartAt
-              )}`
-            : ""}
+          Your upcoming learning session
         </span>
       </div>
 
-      <div className="student-session-actions">
+      <div className="student-upcoming-session-actions">
         {session.meetingUrl ? (
           <a
             className="student-session-primary-link"
@@ -68,14 +146,77 @@ function UpcomingSession({ session }) {
         ) : null}
 
         <Link
+          className="student-upcoming-session-view"
           to={`/portal/student/sessions/${session.sessionId}`}
         >
-          View
+          View →
         </Link>
       </div>
     </article>
   );
 }
+
+
+/* ============================================================
+   UPCOMING DAY GROUP
+   ============================================================ */
+
+function UpcomingDayGroup({
+  date,
+  sessions,
+}) {
+  const today = isToday(date);
+
+  return (
+    <section
+      className={`student-upcoming-day${
+        today ? " is-today" : ""
+      }`}
+    >
+      <header className="student-upcoming-day-heading">
+        <div className="student-upcoming-day-date">
+          <div className="student-upcoming-day-calendar">
+            <span>{formatDayMonth(date)}</span>
+            <strong>{formatDayNumber(date)}</strong>
+          </div>
+
+          <div className="student-upcoming-day-copy">
+            <span className="student-upcoming-day-name">
+              {formatDayName(date)}
+            </span>
+
+            {today ? (
+              <span className="student-upcoming-today-badge">
+                Today
+              </span>
+            ) : null}
+          </div>
+        </div>
+
+        <span className="student-upcoming-day-count">
+          {sessions.length}{" "}
+          {sessions.length === 1
+            ? "session"
+            : "sessions"}
+        </span>
+      </header>
+
+      <div className="student-upcoming-day-sessions">
+        {sessions.map((session) => (
+          <UpcomingSession
+            key={session.sessionId}
+            session={session}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+
+/* ============================================================
+   PAST SESSION
+   ============================================================ */
 
 function PastSession({ session }) {
   return (
@@ -128,11 +269,17 @@ function PastSession({ session }) {
   );
 }
 
+
+/* ============================================================
+   PAGE
+   ============================================================ */
+
 export default function StudentSessionsPage() {
   const { user } = useAuth();
 
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
+
 
   useEffect(() => {
     if (!user?.id) return;
@@ -159,9 +306,48 @@ export default function StudentSessionsPage() {
     };
   }, [user?.id]);
 
+
+  const upcomingGroups = useMemo(() => {
+    if (!data?.upcoming?.length) {
+      return [];
+    }
+
+    const groups = new Map();
+
+    const sorted = [...data.upcoming].sort(
+      (a, b) =>
+        new Date(a.scheduledStartAt).getTime() -
+        new Date(b.scheduledStartAt).getTime()
+    );
+
+    sorted.forEach((session) => {
+      const key = getDateKey(
+        session.scheduledStartAt
+      );
+
+      if (!groups.has(key)) {
+        groups.set(key, {
+          key,
+          date: session.scheduledStartAt,
+          sessions: [],
+        });
+      }
+
+      groups.get(key).sessions.push(session);
+    });
+
+    return Array.from(groups.values());
+  }, [data?.upcoming]);
+
+
   if (error) {
-    return <div className="portal-alert">{error}</div>;
+    return (
+      <div className="portal-alert">
+        {error}
+      </div>
+    );
   }
+
 
   if (!data) {
     return (
@@ -170,6 +356,7 @@ export default function StudentSessionsPage() {
       </div>
     );
   }
+
 
   return (
     <>
@@ -181,12 +368,17 @@ export default function StudentSessionsPage() {
         <h2>Your learning sessions</h2>
 
         <p>
-          See your upcoming lessons and look back at
+          See what is coming up next and revisit
           learning recorded from previous sessions.
         </p>
       </section>
 
-      <section className="portal-card student-sessions-section">
+
+      {/* =====================================================
+          UPCOMING
+          ===================================================== */}
+
+      <section className="portal-card student-sessions-section student-upcoming-section">
         <div className="student-sessions-heading">
           <div>
             <p className="portal-eyebrow">
@@ -194,15 +386,28 @@ export default function StudentSessionsPage() {
             </p>
 
             <h2>Next sessions</h2>
+
+            <p className="student-sessions-heading-copy">
+              Your scheduled learning sessions,
+              organised by day.
+            </p>
           </div>
+
+          {data.upcoming.length ? (
+            <span className="student-upcoming-total">
+              {data.upcoming.length} upcoming
+            </span>
+          ) : null}
         </div>
 
-        {data.upcoming.length ? (
-          <div className="student-session-list">
-            {data.upcoming.map((session) => (
-              <UpcomingSession
-                key={session.sessionId}
-                session={session}
+
+        {upcomingGroups.length ? (
+          <div className="student-upcoming-agenda">
+            {upcomingGroups.map((group) => (
+              <UpcomingDayGroup
+                key={group.key}
+                date={group.date}
+                sessions={group.sessions}
               />
             ))}
           </div>
@@ -213,14 +418,19 @@ export default function StudentSessionsPage() {
             </strong>
 
             <p>
-              Your next scheduled session will appear
-              here.
+              Your next scheduled session will
+              appear here.
             </p>
           </div>
         )}
       </section>
 
-      <section className="portal-card student-sessions-section">
+
+      {/* =====================================================
+          PAST
+          ===================================================== */}
+
+      <section className="portal-card student-sessions-section student-past-sessions-section">
         <div className="student-sessions-heading">
           <div>
             <p className="portal-eyebrow">
@@ -228,8 +438,14 @@ export default function StudentSessionsPage() {
             </p>
 
             <h2>Your session history</h2>
+
+            <p className="student-sessions-heading-copy">
+              Revisit previous sessions, progress,
+              homework and resources.
+            </p>
           </div>
         </div>
+
 
         {data.past.length ? (
           <div className="student-session-list">
@@ -255,4 +471,5 @@ export default function StudentSessionsPage() {
     </>
   );
 }
+
 
