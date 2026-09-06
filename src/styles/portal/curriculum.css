@@ -1,110 +1,222 @@
+/* ============================================================
+   AEOS CURRICULUM
+   Branded Visual System
+   ============================================================ */
+
 .curriculum-page {
+  --curriculum-green: #0b4d3c;
+  --curriculum-green-2: #08634f;
+  --curriculum-green-soft: #e6f4ef;
+
+  --curriculum-gold: #d4a017;
+  --curriculum-gold-soft: #fff7e6;
+
+  --curriculum-blue-soft: #e9f2ff;
+
+  --curriculum-text: #17233a;
+  --curriculum-muted: #667085;
+  --curriculum-border: #dce3ea;
+
   display: grid;
   gap: 20px;
 }
+
+
+/* ============================================================
+   PAGE HEADING
+   ============================================================ */
 
 .curriculum-page-heading {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+
   gap: 24px;
+
+  padding: 4px 2px 2px;
 }
 
 .curriculum-page-heading h1 {
   margin: 2px 0 6px;
+
+  color: var(--curriculum-green);
+
+  font-size: clamp(1.8rem, 3vw, 2.35rem);
 }
 
 .curriculum-page-heading p {
   margin: 0;
+
   max-width: 760px;
+
+  color: var(--curriculum-muted);
+
   line-height: 1.6;
 }
 
 .curriculum-eyebrow {
+  color: var(--curriculum-gold);
+
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 800;
+
   letter-spacing: 0.08em;
+
   text-transform: uppercase;
-  opacity: 0.62;
 }
+
+
+/* ============================================================
+   HEADING STATS
+   ============================================================ */
 
 .curriculum-heading-stats {
   display: flex;
+
   gap: 12px;
+
   flex-shrink: 0;
 }
 
 .curriculum-heading-stat {
   display: grid;
   justify-items: center;
-  gap: 2px;
 
-  min-width: 100px;
-  padding: 12px 16px;
+  gap: 3px;
 
-  border: 1px solid var(--aeos-border);
+  min-width: 108px;
+
+  padding: 13px 16px;
+
+  border: 1px solid #c8ddd5;
   border-radius: 14px;
 
-  background: #fff;
+  background:
+    linear-gradient(
+      145deg,
+      var(--curriculum-green-soft),
+      #ffffff
+    );
+
+  box-shadow:
+    0 3px 12px
+    rgb(23 35 58 / 5%);
+}
+
+.curriculum-heading-stat:nth-child(even) {
+  border-color: #eadba7;
+
+  background:
+    linear-gradient(
+      145deg,
+      var(--curriculum-gold-soft),
+      #ffffff
+    );
 }
 
 .curriculum-heading-stat strong {
-  font-size: 1.35rem;
+  color: var(--curriculum-green);
+
+  font-size: 1.4rem;
 }
 
 .curriculum-heading-stat span {
+  color: var(--curriculum-muted);
+
   font-size: 0.72rem;
-  opacity: 0.65;
+  font-weight: 650;
 }
+
+
+/* ============================================================
+   FILTERS
+   ============================================================ */
 
 .curriculum-filters {
   display: grid;
+
   grid-template-columns:
     repeat(3, minmax(150px, 1fr))
     minmax(220px, 1.4fr);
+
   gap: 14px;
+
   align-items: end;
+
+  border-top:
+    4px solid
+    var(--curriculum-green);
 }
 
 .curriculum-filter-field {
   display: grid;
+
   gap: 6px;
 }
 
 .curriculum-filter-field label {
+  color: var(--curriculum-green);
+
   font-size: 0.76rem;
-  font-weight: 700;
-  opacity: 0.72;
+  font-weight: 750;
 }
 
 .curriculum-filter-field select,
 .curriculum-filter-field input {
   width: 100%;
+
   min-height: 42px;
 
   padding: 9px 11px;
 
-  border: 1px solid var(--aeos-border);
+  border:
+    1px solid
+    var(--curriculum-border);
+
   border-radius: 10px;
 
   background: #fff;
 
+  color: var(--curriculum-text);
+
   font: inherit;
   font-size: 0.9rem;
+
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.curriculum-filter-field select:hover,
+.curriculum-filter-field input:hover {
+  border-color: #b8c9c3;
 }
 
 .curriculum-filter-field select:focus,
 .curriculum-filter-field input:focus {
-  outline: 2px solid rgba(70, 92, 130, 0.12);
-  outline-offset: 1px;
+  border-color: var(--curriculum-green);
+
+  outline: none;
+
+  box-shadow:
+    0 0 0 3px
+    rgb(11 77 60 / 10%);
 }
+
+
+/* ============================================================
+   WORKSPACE
+   ============================================================ */
 
 .curriculum-workspace {
   display: grid;
+
   grid-template-columns:
     minmax(320px, 0.95fr)
     minmax(420px, 1.45fr);
+
   gap: 20px;
+
   align-items: start;
 }
 
@@ -115,30 +227,54 @@
 
 .curriculum-browser {
   display: grid;
+
   gap: 14px;
+
+  border-top:
+    4px solid
+    var(--curriculum-gold);
 }
 
 .curriculum-detail-panel {
   min-height: 420px;
+
+  border-top:
+    4px solid
+    var(--curriculum-green);
 }
+
+
+/* ============================================================
+   SECTION HEADINGS
+   ============================================================ */
 
 .curriculum-section-heading,
 .curriculum-detail-section-heading {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   gap: 16px;
 }
 
-.curriculum-section-heading h2,
+.curriculum-section-heading h2 {
+  margin: 0;
+
+  color: var(--curriculum-green);
+}
+
 .curriculum-detail-section-heading h3 {
   margin: 0;
+
+  color: var(--curriculum-text);
 }
 
 .curriculum-section-heading p {
   margin: 3px 0 0;
+
+  color: var(--curriculum-muted);
+
   font-size: 0.82rem;
-  opacity: 0.65;
 }
 
 .curriculum-section-heading > span,
@@ -148,19 +284,33 @@
 
   min-width: 30px;
   height: 30px;
+
   padding: 0 9px;
+
+  border:
+    1px solid
+    #dfd29e;
 
   border-radius: 999px;
 
-  background: #f1f4f8;
+  background:
+    var(--curriculum-gold-soft);
+
+  color: #725500;
 
   font-size: 0.76rem;
-  font-weight: 700;
+  font-weight: 750;
 }
+
+
+/* ============================================================
+   TREE
+   ============================================================ */
 
 .curriculum-tree {
   display: grid;
-  gap: 2px;
+
+  gap: 3px;
 }
 
 .curriculum-tree-node {
@@ -170,22 +320,34 @@
 .curriculum-tree-row {
   display: flex;
   align-items: stretch;
+
   gap: 2px;
 
   border-radius: 10px;
 
   transition:
     background 130ms ease,
-    border-color 130ms ease;
+    box-shadow 130ms ease;
 }
 
 .curriculum-tree-row:hover {
-  background: #f8f9fc;
+  background:
+    var(--curriculum-blue-soft);
 }
 
 .curriculum-tree-row.active {
-  background: #f2f5fa;
+  background:
+    var(--curriculum-green-soft);
+
+  box-shadow:
+    inset 4px 0 0
+    var(--curriculum-gold);
 }
+
+
+/* ============================================================
+   TREE TOGGLE
+   ============================================================ */
 
 .curriculum-tree-toggle,
 .curriculum-tree-toggle-placeholder {
@@ -202,86 +364,130 @@
   padding: 0;
 
   border: 0;
+
   background: transparent;
+
+  color: var(--curriculum-green);
 
   cursor: pointer;
 
   font: inherit;
   font-size: 0.82rem;
 
-  opacity: 0.65;
+  opacity: 0.7;
 }
 
 .curriculum-tree-toggle:hover {
   opacity: 1;
 }
 
+
+/* ============================================================
+   TREE NODE
+   ============================================================ */
+
 .curriculum-tree-select {
   appearance: none;
 
   display: flex;
   align-items: flex-start;
+
   gap: 10px;
 
   width: 100%;
 
   padding: 9px 10px;
 
-  text-align: left;
-
   border: 0;
+
   background: transparent;
+
+  color: var(--curriculum-text);
 
   cursor: pointer;
 
   font: inherit;
+  text-align: left;
 }
 
 .curriculum-node-type {
   flex-shrink: 0;
 
   margin-top: 1px;
+
   padding: 3px 7px;
+
+  border:
+    1px solid
+    #c9ddd6;
 
   border-radius: 999px;
 
-  background: #eef1f5;
+  background:
+    var(--curriculum-green-soft);
+
+  color: var(--curriculum-green);
 
   font-size: 0.64rem;
-  font-weight: 700;
+  font-weight: 750;
   line-height: 1.3;
 
-  text-transform: uppercase;
   letter-spacing: 0.03em;
+
+  text-transform: uppercase;
+}
+
+.curriculum-tree-row.active
+  .curriculum-node-type {
+  border-color: #e3c456;
+
+  background:
+    var(--curriculum-gold-soft);
+
+  color: #6f5300;
 }
 
 .curriculum-node-copy {
   display: grid;
+
   gap: 2px;
+
   min-width: 0;
 }
 
 .curriculum-node-copy strong {
+  color: var(--curriculum-text);
+
   font-size: 0.9rem;
   line-height: 1.35;
 }
 
 .curriculum-node-copy small {
+  color: var(--curriculum-muted);
+
   font-size: 0.68rem;
-  opacity: 0.56;
 }
 
 .curriculum-tree-children {
   margin-left: 17px;
+
   padding-left: 10px;
 
-  border-left: 1px solid var(--aeos-border);
+  border-left:
+    1px solid
+    #c8d8d2;
 }
+
+
+/* ============================================================
+   EMPTY STATES
+   ============================================================ */
 
 .curriculum-empty,
 .curriculum-detail-empty {
   display: grid;
   justify-items: center;
+
   gap: 6px;
 
   padding: 36px 20px;
@@ -292,16 +498,20 @@
 .curriculum-empty p,
 .curriculum-detail-empty p {
   margin: 0;
+
   max-width: 420px;
+
+  color: var(--curriculum-muted);
 
   font-size: 0.88rem;
   line-height: 1.55;
-
-  opacity: 0.68;
 }
 
 .curriculum-detail-empty h2 {
   margin: 2px 0 0;
+
+  color: var(--curriculum-green);
+
   font-size: 1.15rem;
 }
 
@@ -312,15 +522,28 @@
   width: 48px;
   height: 48px;
 
+  border:
+    1px solid
+    #c9ddd6;
+
   border-radius: 999px;
-  background: #f1f4f8;
+
+  background:
+    var(--curriculum-green-soft);
+
+  color: var(--curriculum-green);
 
   font-size: 1.3rem;
-  opacity: 0.72;
 }
+
+
+/* ============================================================
+   DETAIL
+   ============================================================ */
 
 .curriculum-detail {
   display: grid;
+
   gap: 22px;
 }
 
@@ -328,17 +551,22 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+
   gap: 18px;
 }
 
 .curriculum-detail-heading h2 {
   margin: 5px 0 3px;
+
+  color: var(--curriculum-green);
 }
 
 .curriculum-detail-heading p {
   margin: 0;
+
+  color: var(--curriculum-muted);
+
   font-size: 0.76rem;
-  opacity: 0.58;
 }
 
 .curriculum-detail-type {
@@ -346,15 +574,29 @@
 
   padding: 4px 8px;
 
+  border:
+    1px solid
+    #c8ddd5;
+
   border-radius: 999px;
-  background: #eef1f5;
+
+  background:
+    var(--curriculum-green-soft);
+
+  color: var(--curriculum-green);
 
   font-size: 0.68rem;
-  font-weight: 700;
+  font-weight: 750;
+
+  letter-spacing: 0.04em;
 
   text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
+
+
+/* ============================================================
+   STATUS
+   ============================================================ */
 
 .curriculum-status-pill {
   display: inline-flex;
@@ -368,6 +610,8 @@
 
   background: #eef1f5;
 
+  color: var(--curriculum-text);
+
   font-size: 0.68rem;
   font-weight: 700;
   line-height: 1.2;
@@ -376,77 +620,151 @@
 .curriculum-status-pill.active,
 .curriculum-status-pill.frozen,
 .curriculum-status-pill.certified {
-  background: #edf7f0;
+  border:
+    1px solid
+    #bfd8ce;
+
+  background:
+    var(--curriculum-green-soft);
+
+  color: var(--curriculum-green);
 }
 
 .curriculum-status-pill.inactive,
 .curriculum-status-pill.deprecated {
   background: #f2f2f2;
-  opacity: 0.72;
+
+  color: var(--curriculum-muted);
+
+  opacity: 0.78;
 }
+
+
+/* ============================================================
+   DETAIL GRID
+   ============================================================ */
 
 .curriculum-detail-grid {
   display: grid;
+
   grid-template-columns:
     repeat(2, minmax(0, 1fr));
+
   gap: 10px;
 }
 
 .curriculum-detail-field {
   display: grid;
+
   gap: 3px;
 
-  padding: 11px 12px;
+  padding: 12px;
 
-  border: 1px solid var(--aeos-border);
+  border:
+    1px solid
+    var(--curriculum-border);
+
   border-radius: 11px;
 
-  background: #fafbfc;
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      var(--curriculum-blue-soft)
+    );
+}
+
+.curriculum-detail-field:nth-child(even) {
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      var(--curriculum-green-soft)
+    );
 }
 
 .curriculum-detail-field span {
+  color: var(--curriculum-muted);
+
   font-size: 0.7rem;
-  opacity: 0.62;
 }
 
 .curriculum-detail-field strong {
+  color: var(--curriculum-text);
+
   font-size: 0.86rem;
   line-height: 1.35;
 
   overflow-wrap: anywhere;
 }
 
+
+/* ============================================================
+   DETAIL SECTIONS
+   ============================================================ */
+
 .curriculum-detail-section {
   display: grid;
+
   gap: 12px;
 }
 
-.curriculum-detail-section + .curriculum-detail-section {
+.curriculum-detail-section +
+.curriculum-detail-section {
   padding-top: 18px;
-  border-top: 1px solid var(--aeos-border);
+
+  border-top:
+    1px solid
+    var(--curriculum-border);
 }
 
 .curriculum-detail-section-heading h3 {
   font-size: 1rem;
 }
 
+
+/* ============================================================
+   EXPECTATIONS / LEARNING NODES
+   ============================================================ */
+
 .curriculum-expectation-list,
 .curriculum-learning-node-list {
   display: grid;
+
   gap: 10px;
 }
 
 .curriculum-expectation-card,
 .curriculum-learning-node-card {
   display: grid;
+
   gap: 11px;
 
   padding: 14px;
 
-  border: 1px solid var(--aeos-border);
+  border:
+    1px solid
+    var(--curriculum-border);
+
   border-radius: 13px;
 
   background: #fff;
+
+  box-shadow:
+    0 2px 8px
+    rgb(23 35 58 / 4%);
+}
+
+.curriculum-expectation-card {
+  border-left:
+    4px solid
+    var(--curriculum-gold);
+}
+
+.curriculum-learning-node-card {
+  border-left:
+    4px solid
+    var(--curriculum-green);
 }
 
 .curriculum-expectation-heading,
@@ -454,111 +772,185 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+
   gap: 14px;
 }
 
 .curriculum-expectation-heading > strong {
+  color: var(--curriculum-green);
+
   font-size: 0.88rem;
 }
 
 .curriculum-expectation-card > p {
   margin: 0;
 
+  color: var(--curriculum-text);
+
   font-size: 0.9rem;
   line-height: 1.55;
 }
 
+
+/* ============================================================
+   NOTES
+   ============================================================ */
+
 .curriculum-detail-note {
   display: grid;
+
   gap: 4px;
 
   padding: 10px 12px;
 
+  border-left:
+    3px solid
+    var(--curriculum-gold);
+
   border-radius: 10px;
-  background: #f8f9fc;
+
+  background:
+    var(--curriculum-gold-soft);
 }
 
 .curriculum-detail-note span,
 .curriculum-learning-node-statement span {
+  color: var(--curriculum-muted);
+
   font-size: 0.7rem;
-  font-weight: 700;
-  opacity: 0.62;
+  font-weight: 750;
 }
 
 .curriculum-detail-note p,
 .curriculum-learning-node-statement p {
   margin: 0;
 
+  color: var(--curriculum-text);
+
   font-size: 0.86rem;
   line-height: 1.5;
 }
 
+
+/* ============================================================
+   EXPECTATION META
+   ============================================================ */
+
 .curriculum-expectation-meta {
   display: flex;
   flex-wrap: wrap;
+
   gap: 6px;
 }
 
 .curriculum-expectation-meta span {
   padding: 3px 7px;
 
+  border:
+    1px solid
+    #d6e3de;
+
   border-radius: 999px;
-  background: #f1f4f8;
+
+  background:
+    var(--curriculum-green-soft);
+
+  color: var(--curriculum-green);
 
   font-size: 0.66rem;
-  font-weight: 600;
-
-  opacity: 0.78;
+  font-weight: 650;
 }
+
+
+/* ============================================================
+   LEARNING NODE
+   ============================================================ */
 
 .curriculum-learning-node-heading > div {
   display: grid;
+
   gap: 2px;
 }
 
 .curriculum-learning-node-heading > div > span {
+  color: var(--curriculum-gold);
+
   font-size: 0.68rem;
-  opacity: 0.6;
+  font-weight: 750;
+
+  text-transform: uppercase;
 }
 
 .curriculum-learning-node-heading strong {
+  color: var(--curriculum-text);
+
   font-size: 0.9rem;
   line-height: 1.4;
 }
 
 .curriculum-learning-node-heading small {
+  color: var(--curriculum-muted);
+
   font-size: 0.68rem;
-  opacity: 0.55;
 }
 
 .curriculum-learning-node-statement {
   display: grid;
+
   gap: 4px;
+
+  padding: 10px 12px;
+
+  border-radius: 10px;
+
+  background:
+    var(--curriculum-blue-soft);
 }
 
 .curriculum-learning-node-meta {
   display: flex;
   flex-wrap: wrap;
+
   gap: 8px 16px;
 
+  color: var(--curriculum-muted);
+
   font-size: 0.76rem;
-  opacity: 0.72;
 }
+
+
+/* ============================================================
+   LEARNING NODE EXPECTATIONS
+   ============================================================ */
 
 .curriculum-ln-expectations {
   overflow: hidden;
 
-  border: 1px solid var(--aeos-border);
+  border:
+    1px solid
+    #cbded7;
+
   border-radius: 10px;
+
+  background: #fff;
 }
 
 .curriculum-ln-expectations summary {
   padding: 10px 12px;
 
+  background:
+    linear-gradient(
+      90deg,
+      var(--curriculum-green-soft),
+      #ffffff
+    );
+
+  color: var(--curriculum-green);
+
   cursor: pointer;
 
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 750;
 
   list-style: none;
 }
@@ -569,70 +961,335 @@
 
 .curriculum-ln-expectation-list {
   display: grid;
+
   gap: 0;
 
-  border-top: 1px solid var(--aeos-border);
+  border-top:
+    1px solid
+    var(--curriculum-border);
 }
 
 .curriculum-ln-expectation {
   display: grid;
+
   gap: 6px;
 
   padding: 11px 12px;
 }
 
-.curriculum-ln-expectation + .curriculum-ln-expectation {
-  border-top: 1px solid var(--aeos-border);
+.curriculum-ln-expectation +
+.curriculum-ln-expectation {
+  border-top:
+    1px solid
+    var(--curriculum-border);
 }
 
 .curriculum-ln-expectation > div {
   display: flex;
   justify-content: space-between;
+
   gap: 12px;
 }
 
 .curriculum-ln-expectation > div strong {
+  color: var(--curriculum-green);
+
   font-size: 0.78rem;
 }
 
 .curriculum-ln-expectation > div span {
+  color: var(--curriculum-muted);
+
   font-size: 0.66rem;
-  opacity: 0.65;
 }
 
 .curriculum-ln-expectation p {
   margin: 0;
+
+  color: var(--curriculum-text);
 
   font-size: 0.82rem;
   line-height: 1.5;
 }
 
 .curriculum-ln-expectation p.muted {
-  opacity: 0.58;
+  color: var(--curriculum-muted);
+
   font-style: italic;
 }
+
+
+/* ============================================================
+   EMPTY INLINE
+   ============================================================ */
 
 .curriculum-detail-empty-inline {
   padding: 14px;
 
-  border: 1px dashed var(--aeos-border);
+  border:
+    1px dashed
+    #bcd3ca;
+
   border-radius: 11px;
 
+  background:
+    var(--curriculum-green-soft);
+
+  color: var(--curriculum-muted);
+
   font-size: 0.84rem;
-  opacity: 0.65;
 }
+
+
+/* ============================================================
+   SOURCE
+   ============================================================ */
 
 .curriculum-source-box {
   padding: 12px 14px;
 
-  border: 1px solid var(--aeos-border);
+  border:
+    1px solid
+    #e3d29a;
+
   border-radius: 11px;
 
-  background: #fafbfc;
+  background:
+    var(--curriculum-gold-soft);
+
+  color: var(--curriculum-text);
 
   font-size: 0.82rem;
   line-height: 1.45;
 }
+
+
+/* ============================================================
+   BREADCRUMB
+   ============================================================ */
+
+.curriculum-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+
+  gap: 4px;
+
+  padding:
+    10px
+    12px;
+
+  border:
+    1px solid
+    #d4e2dd;
+
+  border-radius: 10px;
+
+  background:
+    var(--curriculum-green-soft);
+
+  font-size: 0.76rem;
+}
+
+.curriculum-breadcrumb-item {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 4px;
+}
+
+.curriculum-breadcrumb-item button {
+  appearance: none;
+
+  padding: 2px 3px;
+
+  border: 0;
+
+  background: transparent;
+
+  color: var(--curriculum-green);
+
+  cursor: pointer;
+
+  font: inherit;
+  font-weight: 650;
+}
+
+.curriculum-breadcrumb-item button:hover {
+  text-decoration: underline;
+}
+
+.curriculum-breadcrumb-item strong {
+  color: var(--curriculum-text);
+
+  font-size: 0.76rem;
+}
+
+.curriculum-breadcrumb-separator {
+  color: var(--curriculum-gold);
+
+  opacity: 0.8;
+}
+
+
+/* ============================================================
+   LEVEL PILLS
+   ============================================================ */
+
+.curriculum-learning-node-levels {
+  display: grid;
+
+  gap: 7px;
+}
+
+.curriculum-learning-node-levels > span {
+  color: var(--curriculum-muted);
+
+  font-size: 0.7rem;
+  font-weight: 750;
+}
+
+.curriculum-learning-node-level-pills {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 6px;
+}
+
+.curriculum-learning-node-level-pill {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 4px 8px;
+
+  border:
+    1px solid
+    #cddfd8;
+
+  border-radius: 999px;
+
+  background:
+    var(--curriculum-green-soft);
+
+  color: var(--curriculum-green);
+
+  font-size: 0.68rem;
+  font-weight: 650;
+}
+
+
+/* ============================================================
+   FILTER ACTIONS
+   ============================================================ */
+
+.curriculum-filter-actions {
+  grid-column: 1 / -1;
+
+  display: flex;
+  justify-content: flex-end;
+
+  padding-top: 2px;
+}
+
+.curriculum-clear-filter {
+  appearance: none;
+
+  padding: 7px 11px;
+
+  border:
+    1px solid
+    #ccb665;
+
+  border-radius: 9px;
+
+  background:
+    var(--curriculum-gold-soft);
+
+  color: #6d5300;
+
+  cursor: pointer;
+
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+
+  transition:
+    background 140ms ease,
+    transform 140ms ease;
+}
+
+.curriculum-clear-filter:hover {
+  background: #fff0bd;
+
+  transform: translateY(-1px);
+}
+
+
+/* ============================================================
+   PEN-E → CURRICULUM MATCH
+   ============================================================ */
+
+.pen-e-curriculum-match-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  gap: 16px;
+}
+
+.pen-e-curriculum-match-heading > div {
+  display: grid;
+
+  gap: 3px;
+}
+
+.pen-e-curriculum-node-id {
+  color: var(--curriculum-muted);
+
+  font-size: 0.7rem;
+}
+
+.pen-e-curriculum-link {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  flex-shrink: 0;
+
+  padding: 7px 10px;
+
+  border:
+    1px solid
+    #c6dbd3;
+
+  border-radius: 9px;
+
+  background:
+    var(--curriculum-green-soft);
+
+  color: var(--curriculum-green);
+
+  font-size: 0.75rem;
+  font-weight: 750;
+
+  text-decoration: none;
+
+  transition:
+    background 140ms ease,
+    transform 140ms ease;
+}
+
+.pen-e-curriculum-link:hover {
+  background: #d8eee6;
+
+  transform: translateY(-1px);
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 
 @media (max-width: 1100px) {
   .curriculum-filters {
@@ -644,6 +1301,7 @@
     grid-template-columns: 1fr;
   }
 }
+
 
 @media (max-width: 760px) {
   .curriculum-page-heading {
@@ -667,6 +1325,18 @@
   }
 }
 
+
+@media (max-width: 700px) {
+  .pen-e-curriculum-match-heading {
+    flex-direction: column;
+  }
+
+  .pen-e-curriculum-link {
+    width: fit-content;
+  }
+}
+
+
 @media (max-width: 520px) {
   .curriculum-heading-stats {
     flex-direction: column;
@@ -685,162 +1355,8 @@
 
   .curriculum-tree-children {
     margin-left: 10px;
+
     padding-left: 7px;
   }
 }
-
-.curriculum-breadcrumb {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px;
-
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--aeos-border);
-
-  font-size: 0.76rem;
-}
-
-.curriculum-breadcrumb-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.curriculum-breadcrumb-item button {
-  appearance: none;
-  border: 0;
-  padding: 2px 3px;
-  background: transparent;
-
-  font: inherit;
-  color: inherit;
-
-  cursor: pointer;
-  opacity: 0.66;
-}
-
-.curriculum-breadcrumb-item button:hover {
-  opacity: 1;
-  text-decoration: underline;
-}
-
-.curriculum-breadcrumb-item strong {
-  font-size: 0.76rem;
-}
-
-.curriculum-breadcrumb-separator {
-  opacity: 0.38;
-}
-
-.curriculum-learning-node-levels {
-  display: grid;
-  gap: 7px;
-}
-
-.curriculum-learning-node-levels > span {
-  font-size: 0.7rem;
-  font-weight: 700;
-  opacity: 0.62;
-}
-
-.curriculum-learning-node-level-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.curriculum-learning-node-level-pill {
-  display: inline-flex;
-  align-items: center;
-
-  padding: 4px 8px;
-
-  border-radius: 999px;
-  background: #f1f4f8;
-
-  font-size: 0.68rem;
-  font-weight: 600;
-}
-
-.curriculum-filter-actions {
-  grid-column: 1 / -1;
-
-  display: flex;
-  justify-content: flex-end;
-
-  padding-top: 2px;
-}
-
-.curriculum-clear-filter {
-  appearance: none;
-
-  padding: 7px 11px;
-
-  border: 1px solid var(--aeos-border);
-  border-radius: 9px;
-
-  background: #fff;
-
-  font: inherit;
-  font-size: 0.76rem;
-  font-weight: 600;
-
-  cursor: pointer;
-}
-
-.curriculum-clear-filter:hover {
-  background: #f8f9fc;
-}
-
-.pen-e-curriculum-match-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-}
-
-.pen-e-curriculum-match-heading > div {
-  display: grid;
-  gap: 3px;
-}
-
-.pen-e-curriculum-node-id {
-  font-size: 0.7rem;
-  opacity: 0.58;
-}
-
-.pen-e-curriculum-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-
-  padding: 7px 10px;
-
-  border: 1px solid var(--aeos-border);
-  border-radius: 9px;
-
-  background: #fff;
-
-  color: inherit;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.pen-e-curriculum-link:hover {
-  background: #f7f8fb;
-}
-
-@media (max-width: 700px) {
-  .pen-e-curriculum-match-heading {
-    flex-direction: column;
-  }
-
-  .pen-e-curriculum-link {
-    width: fit-content;
-  }
-}
-
 

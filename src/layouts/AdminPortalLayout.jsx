@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import PortalHeader from "../components/portal/PortalHeader";
+import logo from "../assets/logo/as-online-logo.svg";
 
 const links = [
   ["/portal/admin", "Dashboard", true],
@@ -24,10 +25,12 @@ export default function AdminPortalLayout() {
         }`}
       >
         <div className="portal-sidebar-top">
-          <div>
-            <div className="portal-brand">
-              A's Online
-            </div>
+          <div className="portal-brand-block">
+            <img
+              src={logo}
+              alt="A's Online Tutoring Services"
+              className="portal-brand-logo"
+            />
 
             <p className="portal-sidebar-label">
               Admin / Tutor
@@ -76,4 +79,5 @@ export default function AdminPortalLayout() {
     </div>
   );
 }
+
 

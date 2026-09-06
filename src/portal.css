@@ -515,7 +515,7 @@
 
   padding: 28px 18px;
 
-  background: var(--aeos-navy);
+  background: #294f6d;
   color: #fff;
 }
 
@@ -563,6 +563,39 @@
     rgba(255, 255, 255, 0.1);
 }
 
+/* ============================================================
+   PORTAL BRANDING
+   ============================================================ */
+
+.portal-brand-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  gap: 10px;
+}
+
+.portal-brand-logo {
+  display: block;
+
+  width: 92px;
+  max-width: 100%;
+  height: auto;
+}
+
+.portal-sidebar-label {
+  margin: 0;
+
+  color: #d4a017;
+
+  font-size: 0.75rem;
+  font-weight: 700;
+
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+
 
 /* ============================================================
    MOBILE MENU BUTTON
@@ -595,6 +628,15 @@
     rgba(255, 255, 255, 0.14);
 }
 
+@media (max-width: 700px) {
+  .portal-brand-logo {
+    width: 72px;
+  }
+
+  .portal-brand-block {
+    gap: 6px;
+  }
+}
 
 /* ============================================================
    HEADER
@@ -1408,26 +1450,533 @@
 
 /* ============================================================
    STUDENT MY SESSIONS
+   AEOS BRANDED AGENDA
    ============================================================ */
 
 .student-sessions-section {
+  --student-green: #0b4d3c;
+  --student-green-2: #08634f;
+  --student-green-soft: #e6f4ef;
+
+  --student-gold: #d4a017;
+  --student-gold-soft: #fff7e6;
+
+  --student-blue-soft: #e9f2ff;
+
+  --student-text: #17233a;
+  --student-muted: #667085;
+  --student-border: #dce3ea;
+
   margin-bottom: 24px;
 }
+
+
+/* ============================================================
+   SECTION HEADING
+   ============================================================ */
 
 .student-sessions-heading {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
 
-  gap: 16px;
+  gap: 20px;
 
-  margin-bottom: 18px;
+  margin-bottom: 22px;
 }
 
 .student-sessions-heading h2 {
   margin: 2px 0 0;
 
-  color: var(--aeos-navy);
+  color: var(--student-text);
+}
+
+.student-sessions-heading-copy {
+  margin: 7px 0 0;
+
+  max-width: 620px;
+
+  color: var(--student-muted);
+
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+
+/* ============================================================
+   UPCOMING TOTAL
+   ============================================================ */
+
+.student-upcoming-total {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  padding: 7px 11px;
+
+  border: 1px solid #c6ddd4;
+  border-radius: 999px;
+
+  background: var(--student-green-soft);
+
+  color: var(--student-green);
+
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+
+/* ============================================================
+   UPCOMING AGENDA
+   ============================================================ */
+
+.student-upcoming-agenda {
+  display: grid;
+  gap: 16px;
+}
+
+
+/* ============================================================
+   DAY GROUP
+   ============================================================ */
+
+.student-upcoming-day {
+  overflow: hidden;
+
+  border: 1px solid var(--student-border);
+  border-radius: 16px;
+
+  background: #fff;
+
+  box-shadow:
+    0 3px 14px
+    rgb(23 35 58 / 5%);
+}
+
+
+/* ============================================================
+   DAY HEADING
+   ============================================================ */
+
+.student-upcoming-day-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  min-height: 72px;
+
+  padding: 12px 16px;
+
+  border-bottom:
+    1px solid
+    var(--student-border);
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--student-blue-soft),
+      #ffffff 70%
+    );
+}
+
+.student-upcoming-day:nth-child(even)
+  .student-upcoming-day-heading {
+  background:
+    linear-gradient(
+      90deg,
+      var(--student-green-soft),
+      #ffffff 70%
+    );
+}
+
+
+/* ============================================================
+   DAY DATE
+   ============================================================ */
+
+.student-upcoming-day-date {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+}
+
+
+/* Small calendar date block */
+
+.student-upcoming-day-calendar {
+  display: grid;
+  place-items: center;
+
+  flex: 0 0 58px;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    #cbd7df;
+
+  border-radius: 11px;
+
+  background: #fff;
+
+  box-shadow:
+    0 2px 8px
+    rgb(23 35 58 / 5%);
+}
+
+.student-upcoming-day-calendar span {
+  width: 100%;
+
+  padding: 4px 6px;
+
+  background: var(--student-green);
+
+  color: #fff;
+
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.student-upcoming-day-calendar strong {
+  padding: 5px 7px 7px;
+
+  color: var(--student-text);
+
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+
+/* Day name */
+
+.student-upcoming-day-copy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+
+  gap: 8px;
+}
+
+.student-upcoming-day-name {
+  color: var(--student-green);
+
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+
+/* Day session count */
+
+.student-upcoming-day-count {
+  display: inline-flex;
+  align-items: center;
+
+  flex-shrink: 0;
+
+  padding: 6px 10px;
+
+  border:
+    1px solid
+    #dfd4ad;
+
+  border-radius: 999px;
+
+  background: var(--student-gold-soft);
+
+  color: #735600;
+
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+
+/* ============================================================
+   TODAY
+   ============================================================ */
+
+.student-upcoming-day.is-today {
+  border-color: var(--student-gold);
+
+  box-shadow:
+    0 5px 20px
+    rgb(11 77 60 / 10%);
+}
+
+.student-upcoming-day.is-today
+  .student-upcoming-day-heading {
+  border-bottom-color:
+    rgb(255 255 255 / 18%);
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--student-green),
+      var(--student-green-2)
+    );
+}
+
+.student-upcoming-day.is-today
+  .student-upcoming-day-name {
+  color: #f7d56b;
+}
+
+.student-upcoming-day.is-today
+  .student-upcoming-day-calendar {
+  border-color: #f3d36c;
+}
+
+.student-upcoming-day.is-today
+  .student-upcoming-day-calendar span {
+  background: var(--student-gold);
+
+  color: #3e3100;
+}
+
+.student-upcoming-day.is-today
+  .student-upcoming-day-calendar strong {
+  background: #fff7e6;
+  color: var(--student-green);
+}
+
+.student-upcoming-day.is-today
+  .student-upcoming-day-count {
+  border-color: #f0cf62;
+
+  background: #fff7e6;
+
+  color: var(--student-green);
+}
+
+.student-upcoming-today-badge {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 4px 8px;
+
+  border-radius: 999px;
+
+  background: var(--student-gold);
+
+  color: #342900;
+
+  font-size: 0.65rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+
+  text-transform: uppercase;
+}
+
+
+/* ============================================================
+   UPCOMING SESSION ROWS
+   ============================================================ */
+
+.student-upcoming-day-sessions {
+  display: grid;
+}
+
+.student-upcoming-session {
+  display: grid;
+
+  grid-template-columns:
+    130px
+    minmax(0, 1fr)
+    auto;
+
+  align-items: center;
+
+  gap: 22px;
+
+  min-height: 82px;
+
+  padding: 14px 16px;
+
+  border-bottom:
+    1px solid
+    var(--student-border);
+
+  background: #fff;
+
+  transition:
+    background 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.student-upcoming-session:last-child {
+  border-bottom: 0;
+}
+
+.student-upcoming-session:hover {
+  background: #fcfdfd;
+
+  box-shadow:
+    inset 4px 0 0
+    var(--student-gold);
+}
+
+
+/* ============================================================
+   UPCOMING TIME
+   ============================================================ */
+
+.student-upcoming-session-time {
+  display: grid;
+
+  gap: 4px;
+}
+
+.student-upcoming-session-time strong {
+  color: var(--student-green);
+
+  font-size: 1rem;
+  font-weight: 850;
+}
+
+.student-upcoming-session-time span {
+  width: fit-content;
+
+  padding: 3px 7px;
+
+  border:
+    1px solid
+    #c7ddd5;
+
+  border-radius: 999px;
+
+  background:
+    var(--student-green-soft);
+
+  color: var(--student-green);
+
+  font-size: 0.65rem;
+  font-weight: 750;
+}
+
+
+/* ============================================================
+   UPCOMING SESSION COPY
+   ============================================================ */
+
+.student-upcoming-session-main {
+  display: grid;
+
+  gap: 5px;
+
+  min-width: 0;
+}
+
+.student-upcoming-session-main strong {
+  overflow: hidden;
+
+  color: var(--student-text);
+
+  font-size: 1rem;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.student-upcoming-session-main span {
+  color: var(--student-muted);
+
+  font-size: 0.82rem;
+}
+
+
+/* ============================================================
+   UPCOMING ACTIONS
+   ============================================================ */
+
+.student-upcoming-session-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 12px;
+
+  flex-shrink: 0;
+}
+
+.student-upcoming-session-view {
+  color: var(--student-green);
+
+  font-size: 0.88rem;
+  font-weight: 750;
+
+  text-decoration: none;
+
+  white-space: nowrap;
+}
+
+.student-upcoming-session-view:hover {
+  text-decoration: underline;
+}
+
+
+/* ============================================================
+   JOIN SESSION
+   ============================================================ */
+
+.student-session-primary-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 40px;
+
+  padding: 8px 14px;
+
+  border:
+    1px solid
+    var(--student-green);
+
+  border-radius: 10px;
+
+  background: var(--student-green);
+
+  color: #fff !important;
+
+  font-size: 0.86rem;
+  font-weight: 750;
+
+  text-decoration: none !important;
+
+  white-space: nowrap;
+
+  box-shadow:
+    0 2px 7px
+    rgb(11 77 60 / 10%);
+
+  transition:
+    background 140ms ease,
+    transform 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.student-session-primary-link:hover {
+  background: var(--student-green-2);
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 4px 10px
+    rgb(11 77 60 / 14%);
+}
+
+
+/* ============================================================
+   PAST SESSION HISTORY
+   ============================================================ */
+
+.student-past-sessions-section {
+  margin-top: 4px;
 }
 
 .student-session-list {
@@ -1447,22 +1996,41 @@
 
   gap: 24px;
 
-  padding: 16px 0;
+  padding: 16px 4px;
 
   border-bottom:
     1px solid
-    var(--aeos-border);
+    var(--student-border);
+
+  transition:
+    background 140ms ease,
+    padding 140ms ease;
 }
 
 .student-session-row:first-child {
-  padding-top: 2px;
+  padding-top: 8px;
 }
 
 .student-session-row:last-child {
-  padding-bottom: 2px;
+  padding-bottom: 8px;
 
   border-bottom: 0;
 }
+
+.student-session-row:hover {
+  padding-left: 10px;
+  padding-right: 10px;
+
+  border-radius: 10px;
+
+  background:
+    var(--student-green-soft);
+}
+
+
+/* ============================================================
+   PAST SESSION MAIN
+   ============================================================ */
 
 .student-session-main {
   display: flex;
@@ -1476,45 +2044,65 @@
 .student-session-main strong {
   overflow: hidden;
 
-  color: var(--aeos-navy);
+  color: var(--student-text);
 
-  font-size: 1rem;
+  font-size: 0.96rem;
 
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .student-session-main span {
-  color: var(--aeos-muted);
+  color: var(--student-muted);
 
-  font-size: 0.86rem;
+  font-size: 0.82rem;
 }
+
+
+/* ============================================================
+   PAST SESSION META
+   ============================================================ */
 
 .student-session-meta {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
 
-  gap: 7px 12px;
+  gap: 7px;
 
-  color: var(--aeos-muted);
+  color: var(--student-muted);
 
-  font-size: 0.82rem;
+  font-size: 0.76rem;
 
   text-align: right;
 }
 
 .student-session-meta span {
+  padding: 4px 8px;
+
+  border:
+    1px solid
+    var(--student-border);
+
+  border-radius: 999px;
+
+  background: #f8fafc;
+
   white-space: nowrap;
 }
+
+
+/* ============================================================
+   PAST VIEW LINK
+   ============================================================ */
 
 .student-session-view {
   flex-shrink: 0;
 
-  color: var(--aeos-blue);
+  color: var(--student-green);
 
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: 0.86rem;
+  font-weight: 750;
 
   text-decoration: none;
 }
@@ -1523,136 +2111,689 @@
   text-decoration: underline;
 }
 
-.student-session-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
 
-  gap: 12px;
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 850px) {
+  .student-upcoming-session {
+    grid-template-columns:
+      105px
+      minmax(0, 1fr);
+  }
+
+  .student-upcoming-session-actions {
+    grid-column: 1 / -1;
+
+    justify-content: flex-end;
+
+    padding-top: 2px;
+  }
 }
 
-.student-session-actions a {
-  color: var(--aeos-blue);
 
-  font-size: 0.9rem;
+@media (max-width: 700px) {
+  .student-sessions-heading {
+    flex-direction: column;
+
+    gap: 12px;
+  }
+
+  .student-upcoming-day-heading {
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 12px;
+  }
+
+  .student-upcoming-day-date {
+    gap: 10px;
+  }
+
+  .student-upcoming-day-calendar {
+    flex-basis: 52px;
+  }
+
+  .student-upcoming-session {
+    grid-template-columns: 1fr;
+
+    gap: 10px;
+
+    padding: 14px;
+  }
+
+  .student-upcoming-session-time {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+  }
+
+  .student-upcoming-session-main strong {
+    white-space: normal;
+  }
+
+  .student-upcoming-session-actions {
+    grid-column: auto;
+
+    justify-content: flex-start;
+
+    width: 100%;
+  }
+
+  .student-session-primary-link {
+    flex: 1;
+  }
+
+  .student-upcoming-session-view {
+    padding: 8px;
+  }
+
+  .student-session-row {
+    grid-template-columns: 1fr;
+
+    gap: 10px;
+
+    padding: 15px 4px;
+  }
+
+  .student-session-main strong {
+    white-space: normal;
+  }
+
+  .student-session-meta {
+    justify-content: flex-start;
+
+    text-align: left;
+  }
+
+  .student-session-view {
+    width: fit-content;
+  }
+}
+
+/* ============================================================
+   STUDENT SESSION DETAIL
+   AEOS BRANDED LEARNING RECORD
+   ============================================================ */
+
+.student-session-detail-header,
+.student-session-detail-section {
+  --session-green: #0b4d3c;
+  --session-green-2: #08634f;
+  --session-green-soft: #e6f4ef;
+
+  --session-gold: #d4a017;
+  --session-gold-soft: #fff7e6;
+
+  --session-blue: #315f91;
+  --session-blue-soft: #e9f2ff;
+
+  --session-text: #17233a;
+  --session-muted: #667085;
+  --session-border: #dce3ea;
+}
+
+
+/* ============================================================
+   BACK LINK
+   ============================================================ */
+
+.student-learning-back {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  width: fit-content;
+
+  margin-bottom: 16px;
+
+  padding: 7px 10px;
+
+  border:
+    1px solid
+    #c8ddd5;
+
+  border-radius: 9px;
+
+  background:
+    var(--session-green-soft, #e6f4ef);
+
+  color:
+    var(--session-green, #0b4d3c);
+
+  font-size: 0.82rem;
   font-weight: 700;
 
   text-decoration: none;
 
-  white-space: nowrap;
+  transition:
+    background 140ms ease,
+    transform 140ms ease;
 }
 
-.student-session-actions a:hover {
-  text-decoration: underline;
+.student-learning-back:hover {
+  background: #d9eee6;
+
+  transform: translateX(-2px);
 }
 
-.student-session-primary-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 
-  min-height: 38px;
+/* ============================================================
+   SESSION HEADER
+   ============================================================ */
 
-  padding: 8px 12px;
+.student-session-detail-header {
+  position: relative;
 
-  border-radius: 10px;
+  overflow: hidden;
 
-  background: var(--aeos-navy);
-  color: #fff !important;
+  margin-bottom: 24px;
 
-  text-decoration: none !important;
+  padding: 28px 32px 30px;
+
+  border:
+    1px solid
+    #d8e2e7;
+
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #f7fbf9 65%,
+      var(--session-gold-soft) 100%
+    );
+
+  box-shadow:
+    0 4px 18px
+    rgb(23 35 58 / 5%);
+}
+
+.student-session-detail-header::after {
+  content: "";
+
+  position: absolute;
+  top: -42px;
+  right: -30px;
+
+  width: 125px;
+  height: 125px;
+
+  border-radius: 999px;
+
+  background:
+    rgb(212 160 23 / 10%);
+}
+
+.student-session-detail-header .portal-eyebrow {
+  color: var(--session-gold);
+}
+
+.student-session-detail-header h2 {
+  position: relative;
+  z-index: 1;
+
+  color: var(--session-text);
+}
+
+.student-session-detail-header p:last-child {
+  position: relative;
+  z-index: 1;
+
+  margin-bottom: 0;
+
+  color: var(--session-muted);
+
+  font-size: 0.92rem;
+  font-weight: 550;
+}
+
+
+/* ============================================================
+   DETAIL SECTIONS
+   ============================================================ */
+
+.student-session-detail-section {
+  position: relative;
+
+  overflow: hidden;
+
+  margin-bottom: 24px;
+
+  border:
+    1px solid
+    var(--session-border);
+
+  box-shadow:
+    0 3px 14px
+    rgb(23 35 58 / 4%);
+}
+
+.student-session-detail-section > .portal-eyebrow {
+  margin-bottom: 3px;
+}
+
+.student-session-detail-section > h2 {
+  margin: 3px 0 18px;
+
+  color: var(--session-text);
+}
+
+
+/* ============================================================
+   PROGRESS SECTION
+   ============================================================ */
+
+.student-session-detail-section:nth-of-type(2) {
+  border-top:
+    4px solid
+    #5f7fa6;
+}
+
+.student-session-detail-section:nth-of-type(2)
+  > .portal-eyebrow {
+  color: #5f7fa6;
+}
+
+.student-session-detail-section:nth-of-type(2)
+  > h2 {
+  color: var(--session-text);
+}
+
+
+/* ============================================================
+   HOMEWORK SECTION
+   ============================================================ */
+
+.student-session-detail-section:nth-of-type(3) {
+  border-top:
+    4px solid
+    var(--session-gold);
+}
+
+.student-session-detail-section:nth-of-type(3)
+  > .portal-eyebrow {
+  color: #9a7200;
+}
+
+.student-session-detail-section:nth-of-type(3)
+  > h2 {
+  color: #725600;
+}
+
+
+/* ============================================================
+   RESOURCES SECTION
+   ============================================================ */
+
+.student-session-detail-section:nth-of-type(4) {
+  border-top:
+    4px solid
+    var(--session-blue);
+}
+
+.student-session-detail-section:nth-of-type(4)
+  > .portal-eyebrow {
+  color: var(--session-blue);
+}
+
+.student-session-detail-section:nth-of-type(4)
+  > h2 {
+  color: var(--session-blue);
+}
+
+
+/* ============================================================
+   LEARNING LIST
+   ============================================================ */
+
+.student-session-learning-list,
+.student-session-detail-list {
+  display: grid;
+
+  gap: 12px;
+}
+
+
+/* ============================================================
+   LEARNING ITEMS
+   ============================================================ */
+
+.student-session-learning-item {
+  position: relative;
+
+  display: grid;
+
+  gap: 6px;
+
+  padding: 15px 16px;
+
+  border:
+    1px solid
+    #d6e0e7;
+
+  border-radius: 13px;
+
+  background: #ffffff;
 
   transition:
-    opacity 0.15s ease,
-    transform 0.15s ease;
+    transform 140ms ease,
+    box-shadow 140ms ease;
 }
 
-.student-session-primary-link:hover {
-  opacity: 0.92;
+.student-session-learning-item:nth-child(3n + 1) {
+  border-color: #cbdbe7;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #edf5fb
+    );
+}
+
+.student-session-learning-item:nth-child(3n + 2) {
+  border-color: #cfe1da;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #eef8f4
+    );
+}
+
+.student-session-learning-item:nth-child(3n + 3) {
+  border-color: #e5d9ad;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #fff9e9
+    );
+}
+
+.student-session-learning-item:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 5px 14px
+    rgb(23 35 58 / 7%);
+}
+
+.student-session-learning-item strong {
+  color: var(--session-text);
+
+  font-size: 0.94rem;
+}
+
+.student-session-learning-item:nth-child(3n + 1)
+  strong {
+  color: #315f91;
+}
+
+.student-session-learning-item:nth-child(3n + 2)
+  strong {
+  color: var(--session-green);
+}
+
+.student-session-learning-item:nth-child(3n + 3)
+  strong {
+  color: #7a5c00;
+}
+
+.student-session-learning-item p {
+  margin: 0;
+
+  color: var(--session-muted);
+
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+
+/* ============================================================
+   HOMEWORK / RESOURCE CARDS
+   ============================================================ */
+
+.student-session-detail-list article {
+  display: grid;
+
+  gap: 7px;
+
+  padding: 15px 16px;
+
+  border:
+    1px solid
+    var(--session-border);
+
+  border-radius: 13px;
+
+  background: #fff;
+
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.student-session-detail-list article:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 5px 14px
+    rgb(23 35 58 / 6%);
+}
+
+
+/* Homework cards */
+
+.student-session-detail-section:nth-of-type(3)
+  .student-session-detail-list article {
+  border-color: #e5d8aa;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      var(--session-gold-soft)
+    );
+}
+
+.student-session-detail-section:nth-of-type(3)
+  .student-session-detail-list article strong {
+  color: #755800;
+}
+
+
+/* Resource cards */
+
+.student-session-detail-section:nth-of-type(4)
+  .student-session-detail-list article {
+  border-color: #cad9e9;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      var(--session-blue-soft)
+    );
+}
+
+.student-session-detail-section:nth-of-type(4)
+  .student-session-detail-list article strong {
+  color: var(--session-blue);
+}
+
+
+/* ============================================================
+   DETAIL CARD COPY
+   ============================================================ */
+
+.student-session-detail-list article strong {
+  color: var(--session-text);
+
+  font-size: 0.92rem;
+}
+
+.student-session-detail-list article p {
+  margin: 0;
+
+  color: var(--session-muted);
+
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+
+.student-session-detail-list article span {
+  display: inline-flex;
+  align-items: center;
+
+  width: fit-content;
+
+  margin-top: 3px;
+
+  padding: 4px 8px;
+
+  border:
+    1px solid
+    #e2d39b;
+
+  border-radius: 999px;
+
+  background:
+    var(--session-gold-soft);
+
+  color: #705500;
+
+  font-size: 0.72rem;
+  font-weight: 650;
+}
+
+
+/* ============================================================
+   RESOURCE LINKS
+   ============================================================ */
+
+.student-session-detail-list article a {
+  display: inline-flex;
+  align-items: center;
+
+  width: fit-content;
+
+  margin-top: 3px;
+
+  padding: 7px 10px;
+
+  border:
+    1px solid
+    #c5d7e9;
+
+  border-radius: 9px;
+
+  background:
+    #ffffff;
+
+  color: var(--session-blue);
+
+  font-size: 0.8rem;
+  font-weight: 750;
+
+  text-decoration: none;
+
+  transition:
+    background 140ms ease,
+    transform 140ms ease;
+}
+
+.student-session-detail-list article a:hover {
+  background:
+    var(--session-blue-soft);
 
   transform: translateY(-1px);
 }
 
 
 /* ============================================================
-   STUDENT SESSION DETAIL
+   EMPTY STATES INSIDE SESSION DETAIL
    ============================================================ */
 
-.student-session-detail-header {
-  margin-bottom: 24px;
-}
-
-.student-session-detail-header p:last-child {
-  margin-bottom: 0;
-}
-
-.student-session-detail-section {
-  margin-bottom: 24px;
-}
-
-.student-session-detail-section > h2 {
-  margin: 3px 0 18px;
-
-  color: var(--aeos-navy);
-}
-
-.student-session-learning-list,
-.student-session-detail-list {
-  display: grid;
-  gap: 12px;
-}
-
-.student-session-learning-item,
-.student-session-detail-list article {
-  padding: 16px;
-
+.student-session-detail-section
+  .pen-e-empty-state {
   border:
-    1px solid
-    var(--aeos-border);
+    1px dashed
+    var(--session-border);
 
-  border-radius: 14px;
+  border-radius: 12px;
 
-  background: #f8fafc;
+  background: #fafbfc;
 }
 
-.student-session-learning-item strong,
-.student-session-detail-list article strong {
-  color: var(--aeos-navy);
+.student-session-detail-section
+  .pen-e-empty-state strong {
+  color: var(--session-text);
 }
 
-.student-session-learning-item p,
-.student-session-detail-list article p {
-  margin: 6px 0 0;
 
-  color: var(--aeos-muted);
+/* Progress empty */
 
-  line-height: 1.55;
+.student-session-detail-section:nth-of-type(2)
+  .pen-e-empty-state {
+  border-color: #cad8e5;
+
+  background:
+    var(--session-blue-soft);
 }
 
-.student-session-detail-list article span {
-  display: block;
 
-  margin-top: 8px;
+/* Homework empty */
 
-  color: var(--aeos-muted);
+.student-session-detail-section:nth-of-type(3)
+  .pen-e-empty-state {
+  border-color: #dfcf91;
 
-  font-size: 0.84rem;
+  background:
+    var(--session-gold-soft);
 }
 
-.student-session-detail-list article a {
-  display: inline-block;
 
-  margin-top: 10px;
+/* Resources empty */
 
-  color: var(--aeos-blue);
+.student-session-detail-section:nth-of-type(4)
+  .pen-e-empty-state {
+  border-color: #c5d7e9;
 
-  font-weight: 700;
-
-  text-decoration: none;
+  background:
+    var(--session-blue-soft);
 }
 
-.student-session-detail-list article a:hover {
-  text-decoration: underline;
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 700px) {
+  .student-session-detail-header {
+    padding-right: 20px;
+  }
+
+  .student-session-detail-header::after {
+    width: 90px;
+    height: 90px;
+
+    top: -32px;
+    right: -30px;
+  }
+
+  .student-session-learning-item,
+  .student-session-detail-list article {
+    padding: 14px;
+  }
 }
 
 /* ============================================================
