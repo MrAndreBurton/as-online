@@ -538,24 +538,134 @@ export async function updateHomeworkStatus(homeworkId, status) {
   if (error) throw error; return data;
 }
 
-export async function createPastedTranscript({ sessionId, rawText, importedBy, provider="Google Meet" }) {
-  const cleaned = rawText.trim(); if (!cleaned) throw new Error("Paste transcript text first.");
-  const { data, error } = await supabase.from("aeos_transcript_sources").insert({ session_id: sessionId, provider, source_type: "text", raw_text: cleaned, processing_status: "pending", word_count: cleaned.split(/\s+/).filter(Boolean).length, character_count: cleaned.length, source_metadata: { intake_method: "paste" }, imported_by: importedBy }).select().single();
-  if (error) throw error; return data;
+async function sha256Hex(text) {
+  const bytes = new TextEncoder().encode(text);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+
+  return Array.from(new Uint8Array(digest))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+export async function createPastedTranscript({
+  sessionId,
+  rawText,
+  importedBy,
+  provider = "Google Meet",
+}) {
+  const cleaned = rawText.trim();
+
+  if (!cleaned) {
+    throw new Error("Paste transcript text first.");
+  }
+
+  const contentSha256 = await sha256Hex(cleaned);
+
+  const { data, error } = await supabase.rpc(
+    "aeos_import_transcript_to_lie",
+    {
+      target_session_id: sessionId,
+      target_source_provider: provider,
+      target_source_format: "text",
+      target_source_name: "Pasted transcript",
+      target_raw_text: cleaned,
+      target_normalized_text: cleaned,
+      target_content_sha256: contentSha256,
+      target_extracted_metadata: {
+        intake_method: "paste",
+      },
+    }
+  );
+
+  if (error) throw error;
+
+  return data;
 }
 
 function safeFileName(name) { return name.replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, ""); }
-export async function uploadTranscriptFile({ sessionId, file, importedBy, provider="Google Meet" }) {
-  if (!file) throw new Error("Choose a transcript file.");
-  if (file.size > 6 * 1024 * 1024) throw new Error("Transcript file must be 6 MB or smaller for V1.");
-  const extension = file.name.split(".").pop()?.toLowerCase() || "";
-  if (!new Set(["txt","vtt","srt","md"]).has(extension)) throw new Error("For V1, upload .txt, .vtt, .srt or .md. For Google Docs transcripts, paste the transcript text.");
+export async function uploadTranscriptFile({
+  sessionId,
+  file,
+  importedBy,
+  provider = "Google Meet",
+}) {
+  if (!file) {
+    throw new Error("Choose a transcript file.");
+  }
+
+  if (file.size > 6 * 1024 * 1024) {
+    throw new Error(
+      "Transcript file must be 6 MB or smaller for V1."
+    );
+  }
+
+  const extension =
+    file.name.split(".").pop()?.toLowerCase() || "";
+
+  if (
+    !new Set([
+      "txt",
+      "vtt",
+      "srt",
+      "md",
+    ]).has(extension)
+  ) {
+    throw new Error(
+      "For V1, upload .txt, .vtt, .srt or .md. For Google Docs transcripts, paste the transcript text."
+    );
+  }
+
   const text = await file.text();
-  const path = `${sessionId}/${crypto.randomUUID()}-${safeFileName(file.name)}`;
-  const { error: uploadError } = await supabase.storage.from(TRANSCRIPT_BUCKET).upload(path, file, { cacheControl: "3600", upsert: false, contentType: file.type || "text/plain" });
-  if (uploadError) throw uploadError;
-  const { data, error } = await supabase.from("aeos_transcript_sources").insert({ session_id: sessionId, provider, source_type: "file", storage_bucket: TRANSCRIPT_BUCKET, storage_path: path, raw_text: text.trim() || null, processing_status: "pending", word_count: text.trim() ? text.trim().split(/\s+/).filter(Boolean).length : null, character_count: text.length || null, source_metadata: { intake_method: "upload", original_file_name: file.name, mime_type: file.type || null, file_size_bytes: file.size }, imported_by: importedBy }).select().single();
-  if (error) { await supabase.storage.from(TRANSCRIPT_BUCKET).remove([path]); throw error; }
+  const cleaned = text.trim();
+
+  if (!cleaned) {
+    throw new Error(
+      "The transcript file does not contain readable text."
+    );
+  }
+
+  const contentSha256 =
+    await sha256Hex(cleaned);
+
+  const { data, error } =
+    await supabase.rpc(
+      "aeos_import_transcript_to_lie",
+      {
+        target_session_id:
+          sessionId,
+
+        target_source_provider:
+          provider,
+
+        target_source_format:
+          extension,
+
+        target_source_name:
+          file.name,
+
+        target_raw_text:
+          cleaned,
+
+        target_normalized_text:
+          cleaned,
+
+        target_content_sha256:
+          contentSha256,
+
+        target_extracted_metadata: {
+          intake_method: "upload",
+          original_file_name:
+            file.name,
+          mime_type:
+            file.type || null,
+          file_size_bytes:
+            file.size,
+        },
+      }
+    );
+
+  if (error) throw error;
+
   return data;
 }
 
