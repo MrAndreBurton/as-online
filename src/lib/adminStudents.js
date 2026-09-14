@@ -1063,6 +1063,7 @@ export async function inviteExistingStudentToPortal(studentId) {
     {
       body: {
         studentId,
+        redirectTo: `${window.location.origin}/set-password`,
       },
     }
   );
@@ -1080,3 +1081,61 @@ export async function inviteExistingStudentToPortal(studentId) {
 
   return data;
 }
+
+/**
+ * ============================================================
+ * SEND STUDENT PORTAL SETUP / PASSWORD RECOVERY LINK
+ * ============================================================
+ *
+ * Used when a student already has a linked Supabase Auth
+ * account but needs to:
+ *
+ * - finish their original portal setup, or
+ * - recover/reset their portal password.
+ *
+ * Supabase authenticates the recovery link and redirects the
+ * student to /set-password.
+ *
+ * SetPassword.jsx then:
+ *   1. updates the Auth password
+ *   2. calls complete-student-portal-setup
+ *   3. activates the portal profile
+ *   4. sends the student to /portal
+ */
+export async function sendStudentPortalSetupLink(
+  email
+) {
+  const normalizedEmail = String(
+    email || ""
+  )
+    .trim()
+    .toLowerCase();
+
+  if (!normalizedEmail) {
+    throw new Error(
+      "Student email is required."
+    );
+  }
+
+  const { error } =
+    await supabase.auth.resetPasswordForEmail(
+      normalizedEmail,
+      {
+        redirectTo:
+          "https://www.asonlinetutor.com/set-password",
+      }
+    );
+
+  if (error) {
+    throw error;
+  }
+
+  return {
+    ok: true,
+    email: normalizedEmail,
+  };
+}
+
+
+
+

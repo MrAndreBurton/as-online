@@ -19,6 +19,7 @@ import {
   setStudentActive,
   updateStudentProfile,
   inviteExistingStudentToPortal,
+  sendStudentPortalSetupLink,
 } from "../../../lib/adminStudents";
 
 import ImportStudentHistoryModal from "../../../components/history/ImportStudentHistoryModal";
@@ -68,6 +69,9 @@ const [portalMessage, setPortalMessage] = useState("");
 const [historyOpen, setHistoryOpen] = useState(false);
 
 const [invitePortalOpen, setInvitePortalOpen] = useState(false);
+
+const [sendingSetupLink, setSendingSetupLink] =
+  useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -180,6 +184,38 @@ async function inviteToPortal() {
     setError(err.message);
   } finally {
     setInvitingPortal(false);
+  }
+}
+
+async function sendPortalSetupLink() {
+  if (!student.email) {
+    setError(
+      "Add an email address before sending a portal setup link."
+    );
+    return;
+  }
+
+  setSendingSetupLink(true);
+  setError("");
+  setPortalMessage("");
+
+  try {
+    await sendStudentPortalSetupLink(
+      student.email
+    );
+
+    setPortalMessage(
+      `Portal setup link sent to ${student.email}.`
+    );
+
+    setResendInviteOpen(false);
+  } catch (err) {
+    setError(
+      err?.message ||
+        "Unable to send portal setup link."
+    );
+  } finally {
+    setSendingSetupLink(false);
   }
 }
 
@@ -313,6 +349,12 @@ async function inviteToPortal() {
       {message ? (
         <div className="aeos-success">
           {message}
+        </div>
+      ) : null}
+
+      {portalMessage ? (
+        <div className="aeos-success">
+          {portalMessage}
         </div>
       ) : null}
 
@@ -529,22 +571,27 @@ async function inviteToPortal() {
   ) : null}
 
   {student.portal_status === "invited" ? (
-    <>
-      <p className="aeos-note">
-        A portal invitation is pending for this student.
-      </p>
+  <>
+    <p className="aeos-note">
+      This student has a linked portal account but has not
+      completed portal setup.
+    </p>
 
-      <button
-        type="button"
-        className="aeos-button-secondary"
-        onClick={() =>
-          setResendInviteOpen(true)
-        }
-      >
-        Resend Invite
-      </button>
-    </>
-  ) : null}
+    <button
+      type="button"
+      className="aeos-button-secondary"
+      onClick={() =>
+        setResendInviteOpen(true)
+      }
+      disabled={
+        !student.email ||
+        sendingSetupLink
+      }
+    >
+      Send Portal Setup Link
+    </button>
+  </>
+) : null}
 
   {student.portal_status === "active" ? (
     <>
@@ -555,25 +602,6 @@ async function inviteToPortal() {
       <p className="aeos-note">
         This student has an active AEOS portal account.
       </p>
-    </>
-  ) : null}
-
-  {student.portal_status === "disabled" ? (
-    <>
-      <p className="aeos-note">
-        Portal access has been disabled.
-      </p>
-
-      <button
-        type="button"
-        className="aeos-button-primary"
-        onClick={reactivatePortal}
-        disabled={saving}
-      >
-        {saving
-          ? "Reactivating…"
-          : "Reactivate Portal"}
-      </button>
     </>
   ) : null}
 </section>
@@ -808,6 +836,90 @@ async function inviteToPortal() {
     </div>
   </div>
 ) : null}
+
+{resendInviteOpen ? (
+  <div className="aeos-modal-backdrop">
+    <div
+      className="aeos-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="portal-setup-link-title"
+    >
+      <div className="aeos-modal-header">
+        <div>
+          <p className="portal-eyebrow">
+            Portal Access
+          </p>
+
+          <h2 id="portal-setup-link-title">
+            Send Portal Setup Link
+          </h2>
+        </div>
+
+        <button
+          type="button"
+          className="aeos-icon-button"
+          onClick={() =>
+            setResendInviteOpen(false)
+          }
+          disabled={sendingSetupLink}
+          aria-label="Close"
+        >
+          ×
+        </button>
+      </div>
+
+      <dl className="aeos-details">
+        <div>
+          <dt>Student</dt>
+          <dd>{name}</dd>
+        </div>
+
+        <div>
+          <dt>Email</dt>
+          <dd>
+            {student.email ||
+              "Not recorded"}
+          </dd>
+        </div>
+      </dl>
+
+      <p className="aeos-note">
+        AEOS will send a secure account setup link to this
+        student. They can use it to create or reset their
+        password and complete access to the Student Portal.
+      </p>
+
+      <div className="aeos-modal-actions">
+        <button
+          type="button"
+          className="aeos-button-secondary"
+          onClick={() =>
+            setResendInviteOpen(false)
+          }
+          disabled={sendingSetupLink}
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          className="aeos-button-primary"
+          onClick={sendPortalSetupLink}
+          disabled={
+            sendingSetupLink ||
+            !student.email
+          }
+        >
+          {sendingSetupLink
+            ? "Sending…"
+            : "Confirm & Send Link"}
+        </button>
+      </div>
+    </div>
+  </div>
+) : null}
+
     </>
   );
 }
