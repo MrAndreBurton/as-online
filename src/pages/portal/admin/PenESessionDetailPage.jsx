@@ -20,7 +20,9 @@ import {
   fetchPenETranscriptScope,
   reanalysePenETranscript,
   reviewPenESuggestion,
+  linkPenEEvidenceSkill,
 } from "../../../lib/penEAnalysis";
+
 
 import "../../../styles/penESessionDetail.css";
 import "../../../styles/penE.css";
@@ -240,6 +242,7 @@ function ReviewButtons({
   id,
   status,
   onChanged,
+  canAccept = true,
 }) {
   const [working, setWorking] =
     useState("");
@@ -278,9 +281,10 @@ function ReviewButtons({
       <button
         type="button"
         className="aeos-button-primary"
-        disabled={Boolean(
-          working
-        )}
+        disabled={
+          Boolean(working) ||
+          !canAccept
+        }
         onClick={() =>
           review("accepted")
         }
@@ -308,9 +312,212 @@ function ReviewButtons({
   );
 }
 
+function LinkSkillPicker({
+  item,
+  skills,
+  onChanged,
+}) {
+  const [open, setOpen] =
+    useState(false);
+  const [search, setSearch] =
+    useState("");
+  const [selectedId, setSelectedId] =
+    useState("");
+  const [working, setWorking] =
+    useState(false);
+  const [error, setError] =
+    useState("");
+
+  const availableSkills =
+    (skills ?? [])
+      .filter((skill) => {
+        const query =
+          search.trim().toLowerCase();
+
+        if (!query) {
+          return true;
+        }
+
+        return [
+          skill.source_label,
+          skill.observable_statement,
+          skill.learning_node_id,
+          skill.curriculum_node_id,
+          skill.curriculum_node_name,
+        ].some((value) =>
+          value
+            ?.toLowerCase()
+            .includes(query)
+        );
+      })
+      .sort((a, b) => {
+        const aLabel =
+          a.source_label ||
+          a.observable_statement ||
+          a.learning_node_id ||
+          "";
+        const bLabel =
+          b.source_label ||
+          b.observable_statement ||
+          b.learning_node_id ||
+          "";
+
+        return aLabel.localeCompare(
+          bLabel,
+          undefined,
+          { sensitivity: "base" }
+        );
+      });
+
+  async function linkSkill() {
+    if (!selectedId) {
+      setError(
+        "Select a Learning Node skill."
+      );
+      return;
+    }
+
+    setWorking(true);
+    setError("");
+
+    try {
+      await linkPenEEvidenceSkill(
+        item.evidence_suggestion_id,
+        selectedId
+      );
+
+      setOpen(false);
+      setSearch("");
+      setSelectedId("");
+
+      await onChanged();
+    } catch (err) {
+      setError(
+        err.message ||
+          "Unable to link Learning Node skill."
+      );
+    } finally {
+      setWorking(false);
+    }
+  }
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        className="aeos-button-secondary"
+        onClick={() => {
+          setError("");
+          setOpen(true);
+        }}
+      >
+        Link Skill
+      </button>
+    );
+  }
+
+  return (
+    <div className="pen-e-skill-picker">
+      <div className="pen-e-skill-picker-heading">
+        <strong>
+          Link Learning Node skill
+        </strong>
+
+        <button
+          type="button"
+          className="pen-e-skill-picker-close"
+          disabled={working}
+          onClick={() => {
+            setOpen(false);
+            setSearch("");
+            setSelectedId("");
+            setError("");
+          }}
+        >
+          Cancel
+        </button>
+      </div>
+
+      <input
+        type="search"
+        className="pen-e-skill-search"
+        value={search}
+        disabled={working}
+        placeholder="Search skills..."
+        onChange={(event) =>
+          setSearch(
+            event.target.value
+          )
+        }
+      />
+
+      <select
+        className="pen-e-skill-select"
+        value={selectedId}
+        disabled={working}
+        onChange={(event) => {
+          setSelectedId(
+            event.target.value
+          );
+          setError("");
+        }}
+      >
+        <option value="">
+          Select a skill
+        </option>
+
+        {availableSkills.map(
+          (skill) => (
+            <option
+              key={
+                skill.learning_node_id
+              }
+              value={
+                skill.learning_node_id
+              }
+            >
+              {skill.source_label ||
+                skill.observable_statement ||
+                skill.learning_node_id}
+            </option>
+          )
+        )}
+      </select>
+
+      <div className="pen-e-skill-picker-meta">
+        {availableSkills.length} skill
+        {availableSkills.length === 1
+          ? ""
+          : "s"}{" "}
+        available
+      </div>
+
+      {error ? (
+        <div className="pen-e-skill-picker-error">
+          {error}
+        </div>
+      ) : null}
+
+      <button
+        type="button"
+        className="aeos-button-primary"
+        disabled={
+          working || !selectedId
+        }
+        onClick={linkSkill}
+      >
+        {working
+          ? "Linking..."
+          : "Link Selected Skill"}
+      </button>
+    </div>
+  );
+}
+
 function EvidenceCard({
   item,
   onChanged,
+  skills,
 }) {
   return (
     <article className="pen-e-intelligence-item">
@@ -337,11 +544,44 @@ function EvidenceCard({
             </span>
           ) : null}
 
+          {item.learning_node?.source_label ? (
+            <span>
+              {item.learning_node.source_label}
+            </span>
+          ) : null}
+
           <span>
             {item.confidence}%
             confidence
           </span>
         </div>
+
+        {!item.learning_node_id &&
+        item.review_status ===
+          "pending_review" ? (
+          <div className="pen-e-mapping-warning">
+            <span className="pen-e-mapping-warning-icon">
+              !
+            </span>
+
+            <div>
+              <strong>
+                Learning Node skill not linked
+              </strong>
+
+              <p>
+                Link this evidence to a skill
+                before accepting it.
+              </p>
+
+              <LinkSkillPicker
+                item={item}
+                skills={skills}
+                onChanged={onChanged}
+              />
+            </div>
+          </div>
+        ) : null}
 
         {item.source_excerpt ? (
           <details className="pen-e-source-details">
@@ -386,6 +626,9 @@ function EvidenceCard({
         onChanged={
           onChanged
         }
+        canAccept={Boolean(
+          item.learning_node_id
+        )}
       />
     </article>
   );
@@ -508,6 +751,7 @@ export default function PenESessionDetailPage() {
     analysisScope,
     setAnalysisScope,
   ] = useState(null);
+
 
   const [
     selectedRunId,
@@ -1409,6 +1653,10 @@ export default function PenESessionDetailPage() {
                               onChanged={
                                 refreshAnalysis
                               }
+                              skills={
+                                analysisScope?.candidates ??
+                                []
+                              }
                             />
                           )
                         )}
@@ -1813,5 +2061,6 @@ export default function PenESessionDetailPage() {
     </>
   );
 }
+
 
 

@@ -74,26 +74,25 @@ export async function fetchManualPenEContext(intakeItemId) {
     );
   }
 
-  const { data: nodes, error: nodesError } = await supabase
-    .from("aeos_curriculum_nodes")
-    .select(`
-      curriculum_node_id,
-      programme_id,
-      subject_id,
-      framework_id,
-      parent_node_id,
-      node_type,
-      node_name,
-      sequence,
-      status,
-      source_document
-    `)
-    .eq("programme_id", offering.programme_id)
-    .eq("subject_id", offering.subject_id)
-    .eq("status", "Active")
-    .order("sequence", { ascending: true });
+  const { data: analysisScope, error: scopeError } = await supabase.rpc(
+    "aeos_transcript_analysis_scope",
+    {
+      target_intake_item_id: intakeItemId,
+    }
+  );
 
-  if (nodesError) throw nodesError;
+  if (scopeError) throw scopeError;
+
+  const curriculumNodes = (analysisScope?.candidates ?? []).map((candidate) => ({
+    ...candidate,
+    node_type: "skill",
+    node_name:
+      candidate.source_label ||
+      candidate.observable_statement ||
+      candidate.learning_node_id,
+    parent_node_id: null,
+    framework_id: null,
+  }));
 
   const transcript =
     intake.normalized_content?.trim() ||
@@ -123,9 +122,12 @@ export async function fetchManualPenEContext(intakeItemId) {
     session,
     student,
     studentDisplayName: studentName(student),
-    curriculumNodes: nodes ?? [],
+    analysisScope: analysisScope ?? null,
+    curriculumNodes,
     transcript,
     wordCount: transcript.split(/\s+/).filter(Boolean).length,
     durationMinutes: actualMinutes ?? plannedMinutes,
   };
 }
+
+

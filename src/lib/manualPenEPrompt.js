@@ -1,4 +1,4 @@
-export const MANUAL_PEN_E_PROMPT_VERSION = "pen-e-manual-v2";
+export const MANUAL_PEN_E_PROMPT_VERSION = "pen-e-manual-v3";
 
 const EVIDENCE_TYPES = [
   "demonstrated_understanding",
@@ -51,17 +51,23 @@ function formatDate(value) {
 
 function curriculumBlock(nodes) {
   if (!nodes.length) {
-    return "No curriculum nodes were found for this Offering.";
+    return "No eligible Learning Node skills were found for this Offering.";
   }
 
   return nodes
     .map((node) =>
       [
-        `curriculum_node_id: ${node.curriculum_node_id}`,
-        `node_type: ${node.node_type}`,
-        `node_name: ${node.node_name}`,
-        `parent_node_id: ${node.parent_node_id || "null"}`,
-        `framework_id: ${node.framework_id || "null"}`,
+        `learning_node_id: ${node.learning_node_id}`,
+        `skill_label: ${
+          node.source_label ||
+          node.observable_statement ||
+          node.learning_node_id
+        }`,
+        `observable_statement: ${node.observable_statement || "null"}`,
+        `curriculum_node_id: ${node.curriculum_node_id || "null"}`,
+        `curriculum_node_name: ${node.curriculum_node_name || "null"}`,
+        `curriculum_node_type: ${node.curriculum_node_type || "null"}`,
+        `origin_programme_id: ${node.origin_programme_id || "null"}`,
       ].join("\n")
     )
     .join("\n\n");
@@ -102,20 +108,22 @@ IMPORTANT ANALYSIS PRINCIPLES
 5. Consider whether correct answers were independent, prompted, heavily guided, or corrected after an error.
 6. Repeated performance is stronger evidence than a single response.
 7. Preserve uncertainty.
-8. Only use curriculum_node_id values supplied in the IN-SCOPE AEOS CURRICULUM section below.
-9. Never invent curriculum_node_id values.
-10. If no supplied curriculum node clearly matches an observation, use null for evidence curriculum_node_id.
-11. Only add a curriculum match when the transcript provides meaningful evidence that the session actually addressed that node.
-12. Identify explicit commitments separately from Pen-E recommendations.
-13. Do not treat casual conversation as a learning action.
-14. Do not infer mastery merely because a topic was covered.
-15. Preserve genuine reminder requests as actions.
-16. The tutor will review all suggestions before they become permanent AEOS learning evidence.
-17. Return strict JSON using standard ASCII double quotes. Do not use smart quotes.
-18. Return ONLY JSON. Do not use Markdown fences or explanatory text.
+8. For learning evidence, learning_node_id is the exact skill identity. Only use learning_node_id values supplied in the IN-SCOPE AEOS LEARNING SKILLS section below.
+9. Never invent learning_node_id or curriculum_node_id values.
+10. curriculum_node_id is curriculum hierarchy/context, not the exact skill identity. When an evidence item has a learning_node_id, use the curriculum_node_id shown with that same supplied Learning Node.
+11. If no supplied Learning Node clearly matches an observation, use null for both evidence learning_node_id and curriculum_node_id.
+12. Only add a curriculum match when the transcript provides meaningful evidence that the session actually addressed that curriculum node.
+13. Identify explicit commitments separately from Pen-E recommendations.
+14. Do not treat casual conversation as a learning action.
+15. Do not infer mastery merely because a topic was covered.
+16. Preserve genuine reminder requests as actions.
+17. The tutor will review all suggestions before they become permanent AEOS learning evidence.
+18. Return strict JSON using standard ASCII double quotes. Do not use smart quotes.
+19. Return ONLY JSON. Do not use Markdown fences or explanatory text.
 
-IN-SCOPE AEOS CURRICULUM
-Only these IDs are valid for this analysis.
+IN-SCOPE AEOS LEARNING SKILLS
+Only the Learning Nodes listed below are valid exact skills for this analysis.
+Each Learning Node includes its curriculum_node_id only as curriculum hierarchy/context.
 
 ${curriculumBlock(curriculumNodes)}
 
@@ -142,6 +150,7 @@ what the student actually demonstrated, significant difficulties, and important 
 B. LEARNING EVIDENCE
 Identify meaningful STUDENT learning evidence.
 For every item provide:
+- learning_node_id or null
 - curriculum_node_id or null
 - evidence_type
 - evidence_statement
@@ -154,7 +163,7 @@ Avoid excessive fragmentation. If several student responses support one educatio
 conclusion, combine them into one evidence item rather than generating near-duplicates.
 
 C. CURRICULUM MATCHES
-Only use supplied curriculum_node_id values.
+Only use curriculum_node_id values shown in the supplied Learning Node skill list.
 Do not create a curriculum match simply because the tutor mentioned a topic.
 
 D. ACTIONS AND COMMITMENTS
@@ -186,6 +195,7 @@ OUTPUT SCHEMA
   ],
   "evidence": [
     {
+      "learning_node_id": null,
       "curriculum_node_id": null,
       "evidence_type": "",
       "evidence_statement": "",
@@ -214,7 +224,9 @@ OUTPUT SCHEMA
 FINAL CHECK
 - Every evidence claim is supported by student behaviour.
 - Tutor explanation is not treated as mastery.
-- Only supplied curriculum IDs are used.
+- Every non-null evidence learning_node_id is one of the supplied Learning Nodes.
+- Every evidence curriculum_node_id matches the curriculum context supplied with that Learning Node.
+- Curriculum matches use only supplied curriculum_node_id values.
 - Evidence is not needlessly duplicated.
 - Explicit commitments and recommendations are distinguished.
 - Genuine reminder requests are preserved.
@@ -228,3 +240,6 @@ ${transcript}
 
 Return ONLY the final valid JSON object.`;
 }
+
+
+

@@ -261,6 +261,12 @@ export async function fetchPenEAnalysisRun(
             curriculum_node_id,
             node_type,
             node_name
+          ),
+          learning_node:aeos_learning_nodes(
+            learning_node_id,
+            source_label,
+            observable_statement,
+            curriculum_node_id
           )
         `)
         .eq(
@@ -335,6 +341,38 @@ export async function reviewPenESuggestion(
   }
 }
 
+export async function linkPenEEvidenceSkill(
+  evidenceSuggestionId,
+  learningNodeId
+) {
+  if (!evidenceSuggestionId) {
+    throw new Error(
+      "Evidence suggestion ID is required."
+    );
+  }
+
+  if (!learningNodeId) {
+    throw new Error(
+      "Learning Node skill is required."
+    );
+  }
+
+  const { error } =
+    await supabase.rpc(
+      "aeos_link_pen_e_evidence_skill",
+      {
+        target_evidence_suggestion_id:
+          evidenceSuggestionId,
+        target_learning_node_id:
+          learningNodeId,
+      }
+    );
+
+  if (error) {
+    throw error;
+  }
+}
+
 export async function fetchPenEAnalysisRuns() {
   const { data, error } =
     await supabase
@@ -386,4 +424,6 @@ export async function fetchPenEAnalysisRuns() {
 
   return data ?? [];
 }
+
+
 

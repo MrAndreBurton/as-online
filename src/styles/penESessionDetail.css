@@ -750,3 +750,146 @@
 }
 
 
+.pen-e-mapping-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  margin: 12px 0 10px;
+  padding: 10px 12px;
+
+  border: 1px solid #e6c36a;
+  border-radius: 10px;
+
+  background: #fff8e6;
+
+  color: #6f5a24;
+}
+
+.pen-e-mapping-warning-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 22px;
+  height: 22px;
+
+  flex: 0 0 22px;
+
+  border-radius: 50%;
+
+  background: #d6a84b;
+  color: #fff;
+
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.pen-e-mapping-warning strong {
+  display: block;
+
+  color: #a05a00;
+
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.pen-e-mapping-warning p {
+  margin: 3px 0 0;
+
+  color: #6f6250;
+
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.pen-e-skill-picker {
+  margin-top: 10px;
+  padding-top: 10px;
+
+  border-top: 1px solid
+    rgba(160, 90, 0, 0.18);
+}
+
+.pen-e-skill-picker-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  margin-bottom: 8px;
+}
+
+.pen-e-skill-picker-heading strong {
+  color: #594818;
+  font-size: 0.84rem;
+}
+
+.pen-e-skill-picker-close {
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+
+  color: #765f28;
+
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.pen-e-skill-picker-close:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.pen-e-skill-search,
+.pen-e-skill-select {
+  display: block;
+
+  width: 100%;
+  margin: 0 0 8px;
+  padding: 9px 10px;
+
+  border: 1px solid #d8c99f;
+  border-radius: 8px;
+
+  background: #fff;
+
+  color: #332d21;
+  font: inherit;
+  font-size: 0.84rem;
+}
+
+.pen-e-skill-search:focus,
+.pen-e-skill-select:focus {
+  outline: 2px solid
+    rgba(160, 90, 0, 0.18);
+  outline-offset: 1px;
+
+  border-color: #b68a35;
+}
+
+.pen-e-skill-picker-meta {
+  margin: 2px 0 8px;
+
+  color: #756a56;
+
+  font-size: 0.76rem;
+}
+
+.pen-e-skill-picker-error {
+  margin: 8px 0;
+  padding: 8px 10px;
+
+  border-radius: 7px;
+
+  background: #fff0f0;
+  color: #a12d2d;
+
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
