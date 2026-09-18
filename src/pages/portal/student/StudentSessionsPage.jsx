@@ -1,475 +1,153 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext";
 import { fetchStudentSessions } from "../../../lib/studentSessions";
 
-
-/* ============================================================
-   DATE HELPERS
-   ============================================================ */
-
-function getDate(value) {
-  if (!value) return null;
-
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return null;
-  }
-
-  return date;
-}
-
-
-function getDateKey(value) {
-  const date = getDate(value);
-
-  if (!date) return "unknown";
-
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-}
-
-
-function formatDate(value) {
-  const date = getDate(value);
-
-  if (!date) return "Date unavailable";
-
+function formatDate(value, options = {}) {
+  if (!value) return "Date not set";
   return new Intl.DateTimeFormat("en-TT", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(date);
+    month: "short", day: "numeric", year: "numeric", ...options,
+  }).format(new Date(value));
 }
 
-
-function formatDayName(value) {
-  const date = getDate(value);
-
-  if (!date) return "";
-
+function formatLongDate(value) {
+  if (!value) return "Date not set";
   return new Intl.DateTimeFormat("en-TT", {
-    weekday: "long",
-  }).format(date);
+    weekday: "long", month: "long", day: "numeric",
+  }).format(new Date(value));
 }
-
-
-function formatDayMonth(value) {
-  const date = getDate(value);
-
-  if (!date) return "";
-
-  return new Intl.DateTimeFormat("en-TT", {
-    month: "short",
-  })
-    .format(date)
-    .toUpperCase();
-}
-
-
-function formatDayNumber(value) {
-  const date = getDate(value);
-
-  if (!date) return "";
-
-  return new Intl.DateTimeFormat("en-TT", {
-    day: "numeric",
-  }).format(date);
-}
-
 
 function formatTime(value) {
-  const date = getDate(value);
-
-  if (!date) return "";
-
+  if (!value) return null;
   return new Intl.DateTimeFormat("en-TT", {
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(date);
+    hour: "numeric", minute: "2-digit",
+  }).format(new Date(value));
 }
 
-
-function isToday(value) {
-  const date = getDate(value);
-
-  if (!date) return false;
-
-  const today = new Date();
-
+function SessionMeta({ session }) {
+  const items = [];
+  if (session.progressSkillCount) {
+    items.push(`${session.progressSkillCount} reviewed ${session.progressSkillCount === 1 ? "skill" : "skills"}`);
+  }
+  if (session.reviewedMomentCount) {
+    items.push(`${session.reviewedMomentCount} learning ${session.reviewedMomentCount === 1 ? "moment" : "moments"}`);
+  }
+  if (session.homeworkCount) {
+    items.push(`${session.homeworkCount} homework ${session.homeworkCount === 1 ? "item" : "items"}`);
+  }
+  if (session.resourceCount) {
+    items.push(`${session.resourceCount} ${session.resourceCount === 1 ? "resource" : "resources"}`);
+  }
+  if (!items.length) return null;
   return (
-    date.getFullYear() === today.getFullYear() &&
-    date.getMonth() === today.getMonth() &&
-    date.getDate() === today.getDate()
+    <div className="student-sessions-meta">
+      {items.map((item) => <span key={item}>{item}</span>)}
+    </div>
   );
 }
-
-
-/* ============================================================
-   UPCOMING SESSION
-   ============================================================ */
-
-function UpcomingSession({ session }) {
-  return (
-    <article className="student-upcoming-session">
-      <div className="student-upcoming-session-time">
-        <strong>
-          {formatTime(session.scheduledStartAt) || "Time TBC"}
-        </strong>
-
-        <span>Scheduled</span>
-      </div>
-
-      <div className="student-upcoming-session-main">
-        <strong>{session.title}</strong>
-
-        <span>
-          Your upcoming learning session
-        </span>
-      </div>
-
-      <div className="student-upcoming-session-actions">
-        {session.meetingUrl ? (
-          <a
-            className="student-session-primary-link"
-            href={session.meetingUrl}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Join session
-          </a>
-        ) : null}
-
-        <Link
-          className="student-upcoming-session-view"
-          to={`/portal/student/sessions/${session.sessionId}`}
-        >
-          View →
-        </Link>
-      </div>
-    </article>
-  );
-}
-
-
-/* ============================================================
-   UPCOMING DAY GROUP
-   ============================================================ */
-
-function UpcomingDayGroup({
-  date,
-  sessions,
-}) {
-  const today = isToday(date);
-
-  return (
-    <section
-      className={`student-upcoming-day${
-        today ? " is-today" : ""
-      }`}
-    >
-      <header className="student-upcoming-day-heading">
-        <div className="student-upcoming-day-date">
-          <div className="student-upcoming-day-calendar">
-            <span>{formatDayMonth(date)}</span>
-            <strong>{formatDayNumber(date)}</strong>
-          </div>
-
-          <div className="student-upcoming-day-copy">
-            <span className="student-upcoming-day-name">
-              {formatDayName(date)}
-            </span>
-
-            {today ? (
-              <span className="student-upcoming-today-badge">
-                Today
-              </span>
-            ) : null}
-          </div>
-        </div>
-
-        <span className="student-upcoming-day-count">
-          {sessions.length}{" "}
-          {sessions.length === 1
-            ? "session"
-            : "sessions"}
-        </span>
-      </header>
-
-      <div className="student-upcoming-day-sessions">
-        {sessions.map((session) => (
-          <UpcomingSession
-            key={session.sessionId}
-            session={session}
-          />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-
-/* ============================================================
-   PAST SESSION
-   ============================================================ */
-
-function PastSession({ session }) {
-  return (
-    <article className="student-session-row">
-      <div className="student-session-main">
-        <strong>{session.title}</strong>
-
-        <span>{formatDate(session.sessionDate)}</span>
-      </div>
-
-      <div className="student-session-meta">
-        {session.progressSkillCount > 0 ? (
-          <span>
-            {session.progressSkillCount}{" "}
-            {session.progressSkillCount === 1
-              ? "skill"
-              : "skills"}{" "}
-            with progress
-          </span>
-        ) : (
-          <span>No progress recorded yet</span>
-        )}
-
-        {session.homeworkCount > 0 ? (
-          <span>
-            {session.homeworkCount}{" "}
-            {session.homeworkCount === 1
-              ? "homework item"
-              : "homework items"}
-          </span>
-        ) : null}
-
-        {session.resourceCount > 0 ? (
-          <span>
-            {session.resourceCount}{" "}
-            {session.resourceCount === 1
-              ? "resource"
-              : "resources"}
-          </span>
-        ) : null}
-      </div>
-
-      <Link
-        className="student-session-view"
-        to={`/portal/student/sessions/${session.sessionId}`}
-      >
-        View →
-      </Link>
-    </article>
-  );
-}
-
-
-/* ============================================================
-   PAGE
-   ============================================================ */
 
 export default function StudentSessionsPage() {
   const { user } = useAuth();
-
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
 
-
   useEffect(() => {
     if (!user?.id) return;
-
-    let cancelled = false;
-
-    fetchStudentSessions(user.id)
-      .then((result) => {
-        if (!cancelled) {
-          setData(result);
-        }
-      })
-      .catch((err) => {
-        if (!cancelled) {
-          setError(
-            err?.message ||
-              "Unable to load your sessions."
-          );
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
+    setError("");
+    fetchStudentSessions(user.id).then(setData).catch((e) => setError(e.message));
   }, [user?.id]);
 
+  if (error) return <div className="portal-alert">{error}</div>;
+  if (!data) return <div className="portal-loading">Loading your sessions…</div>;
 
-  const upcomingGroups = useMemo(() => {
-    if (!data?.upcoming?.length) {
-      return [];
-    }
-
-    const groups = new Map();
-
-    const sorted = [...data.upcoming].sort(
-      (a, b) =>
-        new Date(a.scheduledStartAt).getTime() -
-        new Date(b.scheduledStartAt).getTime()
-    );
-
-    sorted.forEach((session) => {
-      const key = getDateKey(
-        session.scheduledStartAt
-      );
-
-      if (!groups.has(key)) {
-        groups.set(key, {
-          key,
-          date: session.scheduledStartAt,
-          sessions: [],
-        });
-      }
-
-      groups.get(key).sessions.push(session);
-    });
-
-    return Array.from(groups.values());
-  }, [data?.upcoming]);
-
-
-  if (error) {
-    return (
-      <div className="portal-alert">
-        {error}
-      </div>
-    );
-  }
-
-
-  if (!data) {
-    return (
-      <div className="portal-loading">
-        Loading your sessions…
-      </div>
-    );
-  }
-
+  const nextSession = data.upcoming[0] || null;
+  const laterSessions = data.upcoming.slice(1);
 
   return (
-    <>
-      <section className="portal-welcome">
-        <p className="portal-eyebrow">
-          My Sessions
-        </p>
-
-        <h2>Your learning sessions</h2>
-
-        <p>
-          See what is coming up next and revisit
-          learning recorded from previous sessions.
-        </p>
+    <div className="student-sessions-page">
+      <section className="student-sessions-hero">
+        <span className="student-sessions-kicker">My Sessions</span>
+        <h2>Your lessons, all in one place.</h2>
+        <p>See what&apos;s coming up and return to the learning, homework, and resources from earlier sessions.</p>
       </section>
 
-
-      {/* =====================================================
-          UPCOMING
-          ===================================================== */}
-
-      <section className="portal-card student-sessions-section student-upcoming-section">
-        <div className="student-sessions-heading">
+      <section className="student-sessions-next">
+        <div className="student-sessions-section-heading">
           <div>
-            <p className="portal-eyebrow">
-              Upcoming
-            </p>
-
-            <h2>Next sessions</h2>
-
-            <p className="student-sessions-heading-copy">
-              Your scheduled learning sessions,
-              organised by day.
-            </p>
+            <span className="student-sessions-kicker">Coming up</span>
+            <h3>Next session</h3>
           </div>
-
-          {data.upcoming.length ? (
-            <span className="student-upcoming-total">
-              {data.upcoming.length} upcoming
-            </span>
-          ) : null}
         </div>
 
-
-        {upcomingGroups.length ? (
-          <div className="student-upcoming-agenda">
-            {upcomingGroups.map((group) => (
-              <UpcomingDayGroup
-                key={group.key}
-                date={group.date}
-                sessions={group.sessions}
-              />
-            ))}
-          </div>
+        {nextSession ? (
+          <article className="student-sessions-next-card">
+            <div>
+              <span className="student-sessions-date-label">{formatLongDate(nextSession.scheduledStartAt)}</span>
+              <h3>{nextSession.offeringName || nextSession.title}</h3>
+              <p>{nextSession.title !== nextSession.offeringName ? nextSession.title : "Your next scheduled lesson"}</p>
+            </div>
+            <div className="student-sessions-next-side">
+              <strong>{formatTime(nextSession.scheduledStartAt)}</strong>
+              <Link to={`/portal/student/sessions/${nextSession.sessionId}`}>View session →</Link>
+            </div>
+          </article>
         ) : (
-          <div className="pen-e-empty-state">
-            <strong>
-              No upcoming sessions scheduled.
-            </strong>
-
-            <p>
-              Your next scheduled session will
-              appear here.
-            </p>
+          <div className="student-sessions-empty">
+            <strong>Nothing scheduled right now.</strong>
+            <p>Your upcoming lessons will appear here.</p>
           </div>
         )}
+
+        {laterSessions.length ? (
+          <div className="student-sessions-later">
+            <span>Later</span>
+            {laterSessions.slice(0, 3).map((session) => (
+              <Link key={session.sessionId} to={`/portal/student/sessions/${session.sessionId}`}>
+                <strong>{formatDate(session.scheduledStartAt)}</strong>
+                <span>{session.offeringName || session.title}</span>
+                <b>{formatTime(session.scheduledStartAt)} →</b>
+              </Link>
+            ))}
+          </div>
+        ) : null}
       </section>
 
-
-      {/* =====================================================
-          PAST
-          ===================================================== */}
-
-      <section className="portal-card student-sessions-section student-past-sessions-section">
-        <div className="student-sessions-heading">
+      <section className="student-sessions-history">
+        <div className="student-sessions-section-heading">
           <div>
-            <p className="portal-eyebrow">
-              Past Sessions
-            </p>
-
-            <h2>Your session history</h2>
-
-            <p className="student-sessions-heading-copy">
-              Revisit previous sessions, progress,
-              homework and resources.
-            </p>
+            <span className="student-sessions-kicker">Session history</span>
+            <h3>Earlier lessons</h3>
           </div>
+          <span className="student-sessions-count">{data.past.length} {data.past.length === 1 ? "session" : "sessions"}</span>
         </div>
-
 
         {data.past.length ? (
-          <div className="student-session-list">
+          <div className="student-sessions-history-list">
             {data.past.map((session) => (
-              <PastSession
-                key={session.sessionId}
-                session={session}
-              />
+              <Link className="student-sessions-history-card" key={session.sessionId} to={`/portal/student/sessions/${session.sessionId}`}>
+                <time>
+                  <strong>{formatDate(session.sessionDate, { month: "short", day: "numeric" })}</strong>
+                  <span>{session.sessionDate ? new Intl.DateTimeFormat("en-TT", { year: "numeric" }).format(new Date(session.sessionDate)) : ""}</span>
+                </time>
+                <div className="student-sessions-history-main">
+                  <span className="student-sessions-offering">{session.offeringName || "Learning session"}</span>
+                  <h4>{session.title}</h4>
+                  <SessionMeta session={session} />
+                </div>
+                <span className="student-sessions-arrow">→</span>
+              </Link>
             ))}
           </div>
         ) : (
-          <div className="pen-e-empty-state">
-            <strong>
-              No completed sessions yet.
-            </strong>
-
-            <p>
-              Completed sessions will appear here.
-            </p>
+          <div className="student-sessions-empty">
+            <strong>No earlier sessions yet.</strong>
+            <p>Your lesson history will build here over time.</p>
           </div>
         )}
       </section>
-    </>
+    </div>
   );
 }
+
 
 
