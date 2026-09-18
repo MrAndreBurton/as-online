@@ -46,23 +46,6 @@ function buildCurriculumPath(curriculumNodeId, curriculumMap) {
   };
 }
 
-function normalizeMastery(row) {
-  if (!row) return null;
-
-  return {
-    masteryId: row.mastery_id,
-    masteryStatus: row.mastery_status,
-    masteryScore: row.mastery_score,
-    confidenceScore: row.confidence_score,
-    approvedEvidenceCount: row.approved_evidence_count ?? 0,
-    independentEvidenceCount: row.independent_evidence_count ?? 0,
-    firstEvidenceAt: row.first_evidence_at,
-    lastEvidenceAt: row.last_evidence_at,
-    lastCalculatedAt: row.last_calculated_at,
-    updatedAt: row.updated_at,
-  };
-}
-
 function determineScopeMode({
   programmeId,
   subjectId,
@@ -468,7 +451,6 @@ export async function fetchStudentLearning(studentUserId) {
   const [
     curriculumLevelResult,
     frameworkResult,
-    masteryResult,
     evidenceResult
   ] = await Promise.all([
     supabase
@@ -504,24 +486,6 @@ export async function fetchStudentLearning(studentUserId) {
       .eq("status", ACTIVE_STATUS),
 
     supabase
-      .from("aeos_student_mastery_portal")
-      .select(`
-        mastery_id,
-        student_user_id,
-        learning_node_id,
-        mastery_status,
-        mastery_score,
-        confidence_score,
-        approved_evidence_count,
-        independent_evidence_count,
-        first_evidence_at,
-        last_evidence_at,
-        last_calculated_at,
-        updated_at
-      `)
-      .eq("student_user_id", studentUserId),
-
-    supabase
       .from("aeos_learning_evidence")
       .select(`
         evidence_id,
@@ -534,7 +498,6 @@ export async function fetchStudentLearning(studentUserId) {
   const preliminaryError = [
     curriculumLevelResult,
     frameworkResult,
-    masteryResult,
     evidenceResult,
   ].find((result) => result.error)?.error;
 
@@ -588,11 +551,6 @@ export async function fetchStudentLearning(studentUserId) {
       relationshipType: row.relationship_type,
     });
   }
-
-  const masteryByLearningNode = byId(
-    masteryResult.data ?? [],
-    "learning_node_id"
-  );
 
 
   const approvedEvidenceCountByLearningNode = new Map();
@@ -692,10 +650,6 @@ export async function fetchStudentLearning(studentUserId) {
                 skill.learningNodeId
               ) ?? 0
             ) > 0,
-
-          mastery: normalizeMastery(
-            masteryByLearningNode.get(skill.learningNodeId)
-          ),
         };
       })
       .sort((a, b) => {
@@ -753,5 +707,7 @@ export async function fetchStudentLearning(studentUserId) {
     enrolments: normalizedEnrolments,
   };
 }
+
+
 
 

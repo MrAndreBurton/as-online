@@ -1,59 +1,30 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext";
 import { fetchStudentLearning } from "../../../lib/studentLearning";
 
 function skillName(skill) {
-  return (
-    skill.skillName ||
-    skill.learningNodeName ||
-    skill.learning_node_name ||
-    skill.nodeName ||
-    skill.node_name ||
-    skill.name ||
-    "Learning skill"
-  );
+  return skill.skillName || skill.learningNodeName || skill.name || "Learning skill";
 }
 
 function strandName(skill) {
-  return (
-    skill.strandName ||
-    skill.strand_name ||
-    skill.strand?.nodeName ||
-    skill.strand?.node_name ||
-    skill.strand?.name ||
-    "Other"
-  );
+  return skill.strand?.name || skill.strandName || "Other";
 }
 
 function topicName(skill) {
-  return (
-    skill.topicName ||
-    skill.topic_name ||
-    skill.topic?.nodeName ||
-    skill.topic?.node_name ||
-    skill.topic?.name ||
-    "General"
-  );
+  return skill.topic?.name || skill.topicName || "General";
 }
 
 function observableStatement(skill) {
-  return (
-    skill.observableStatement ||
-    skill.observable_statement ||
-    skill.learningOutcome ||
-    skill.learning_outcome ||
-    ""
-  );
+  return skill.observableStatement || skill.learningOutcome || "";
 }
 
-function hasRecordedProgress(skill) {
+function hasReviewedLearning(skill) {
   return Boolean(skill.hasRecordedProgress);
 }
 
-function progressLabel(skill) {
-  return hasRecordedProgress(skill)
-    ? "Progress recorded"
-    : "No progress recorded yet";
+function evidenceCount(skill) {
+  return Number(skill.approvedEvidenceCount || 0);
 }
 
 function buildHierarchy(skills) {
@@ -62,99 +33,117 @@ function buildHierarchy(skills) {
   for (const skill of skills) {
     const strand = strandName(skill);
     const topic = topicName(skill);
+    const strandSequence = skill.strand?.sequence ?? 9999;
+    const topicSequence = skill.topic?.sequence ?? 9999;
 
     if (!strands.has(strand)) {
-      strands.set(strand, new Map());
+      strands.set(strand, { strand, sequence: strandSequence, topics: new Map() });
     }
 
-    if (!strands.get(strand).has(topic)) {
-      strands.get(strand).set(topic, []);
+    const strandEntry = strands.get(strand);
+
+    if (!strandEntry.topics.has(topic)) {
+      strandEntry.topics.set(topic, {
+        topic,
+        sequence: topicSequence,
+        skills: [],
+      });
     }
 
-    strands.get(strand).get(topic).push(skill);
+    strandEntry.topics.get(topic).skills.push(skill);
   }
 
-  return [...strands.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([strand, topics]) => ({
-      strand,
-      topics: [...topics.entries()]
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([topic, topicSkills]) => ({
-          topic,
-          skills: [...topicSkills].sort((a, b) =>
+  return [...strands.values()]
+    .sort((a, b) => a.sequence - b.sequence || a.strand.localeCompare(b.strand))
+    .map((strand) => ({
+      strand: strand.strand,
+      topics: [...strand.topics.values()]
+        .sort((a, b) => a.sequence - b.sequence || a.topic.localeCompare(b.topic))
+        .map((topic) => ({
+          ...topic,
+          skills: [...topic.skills].sort((a, b) =>
             skillName(a).localeCompare(skillName(b))
           ),
         })),
     }));
 }
 
-function SkillCard({ skill }) {
+function SkillRow({ skill }) {
+  const reviewed = hasReviewedLearning(skill);
+  const count = evidenceCount(skill);
   const statement = observableStatement(skill);
-  const hasProgress = hasRecordedProgress(skill);
 
   return (
-    <article className="student-skill-card">
-      <div>
-        <strong>{skillName(skill)}</strong>
+    <article
+      className={`student-learning-map-skill ${
+        reviewed ? "has-reviewed-learning" : "programme-skill"
+      }`}
+    >
+      <span className="student-learning-map-marker" aria-hidden="true" />
 
+      <div className="student-learning-map-skill-copy">
+        <strong>{skillName(skill)}</strong>
         {statement ? <p>{statement}</p> : null}
+
+        <span className="student-learning-map-skill-state">
+          {reviewed ? (
+            <>
+              <b>Reviewed learning</b>
+              <span>
+                {count === 1
+                  ? "1 approved learning moment"
+                  : `${count} approved learning moments`}
+              </span>
+            </>
+          ) : (
+            <>
+              <b>In your learning programme</b>
+              <span>No learning claim is being made yet.</span>
+            </>
+          )}
+        </span>
       </div>
 
-      <span
-        className={`student-skill-status ${
-          hasProgress ? "has-progress" : "not-started"
-        }`}
-      >
-        {progressLabel(skill)}
-      </span>
+      {reviewed ? (
+        <Link to="/portal/student/pen-e">See in Pen-E &amp; Me →</Link>
+      ) : null}
     </article>
   );
 }
 
 function TopicPanel({ topic }) {
   const [open, setOpen] = useState(false);
-
-  const progressCount = topic.skills.filter(
-    hasRecordedProgress
-  ).length;
+  const reviewedCount = topic.skills.filter(hasReviewedLearning).length;
 
   return (
-    <div className="student-topic-card">
+    <div className="student-learning-map-topic">
       <button
         type="button"
-        className="student-topic-button"
+        className="student-learning-map-topic-button"
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
       >
         <div>
           <strong>{topic.topic}</strong>
           <span>
-            {topic.skills.length}{" "}
-            {topic.skills.length === 1 ? "skill" : "skills"}
+            {topic.skills.length} {topic.skills.length === 1 ? "skill" : "skills"}
           </span>
         </div>
 
-        <span className="student-topic-meta">
-          {progressCount > 0
-            ? `${progressCount} with progress`
-            : "Explore"}
-
-          <span aria-hidden="true">{open ? "−" : "+"}</span>
-        </span>
+        <div className="student-learning-map-topic-meta">
+          {reviewedCount ? (
+            <span>{reviewedCount} with reviewed learning</span>
+          ) : (
+            <span>Part of your programme</span>
+          )}
+          <b aria-hidden="true">{open ? "−" : "+"}</b>
+        </div>
       </button>
 
       {open ? (
-        <div className="student-topic-skills">
-          {topic.skills.map((skill, index) => (
-            <SkillCard
-              key={
-                skill.learningNodeId ||
-                skill.learning_node_id ||
-                `${topic.topic}-${index}`
-              }
-              skill={skill}
-            />
+        <div className="student-learning-map-topic-skills">
+          {topic.skills.map((skill) => (
+            <SkillRow key={skill.learningNodeId} skill={skill} />
           ))}
         </div>
       ) : null}
@@ -163,63 +152,100 @@ function TopicPanel({ topic }) {
 }
 
 function StrandView({ strand, onBack }) {
-  const skillCount = strand.topics.reduce(
-    (total, topic) => total + topic.skills.length,
-    0
-  );
+  const skills = strand.topics.flatMap((topic) => topic.skills);
+  const reviewedCount = skills.filter(hasReviewedLearning).length;
 
   return (
-    <section className="portal-card student-strand-view">
+    <div className="student-learning-landscape">
       <button
         type="button"
-        className="student-learning-back"
+        className="student-learning-map-back"
         onClick={onBack}
       >
-        ← Back to learning areas
+        ← Learning Map
       </button>
 
-      <div className="student-strand-heading">
-        <div>
-          <p className="portal-eyebrow">Learning Area</p>
-          <h2>{strand.strand}</h2>
-          <p>
-            Choose a topic to see the skills you will work on.
-          </p>
-        </div>
+      <section className="student-learning-strand-hero">
+        <span className="student-learning-map-kicker">Learning area</span>
+        <h2>{strand.strand}</h2>
+        <p>
+          {strand.topics.length} {strand.topics.length === 1 ? "topic" : "topics"} ·{" "}
+          {skills.length} {skills.length === 1 ? "skill" : "skills"}
+        </p>
 
-        <div className="student-strand-count">
-          <strong>{skillCount}</strong>
-          <span>{skillCount === 1 ? "skill" : "skills"}</span>
+        <div className="student-learning-reviewed-note">
+          <span className="student-learning-reviewed-dot" />
+          <div>
+            <strong>
+              {reviewedCount
+                ? `Reviewed learning exists in ${reviewedCount} ${
+                    reviewedCount === 1 ? "skill" : "skills"
+                  }.`
+                : "No reviewed learning is attached here yet."}
+            </strong>
+            <p>
+              Skills without reviewed evidence are still part of your learning
+              programme. They are not being marked as weak or incomplete.
+            </p>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div className="student-topic-list">
+      <section className="student-learning-map-topics">
         {strand.topics.map((topic) => (
-          <TopicPanel
-            key={`${strand.strand}-${topic.topic}`}
-            topic={topic}
-          />
+          <TopicPanel key={`${strand.strand}-${topic.topic}`} topic={topic} />
         ))}
+      </section>
+    </div>
+  );
+}
+
+function StrandCard({ strand, onOpen }) {
+  const skills = strand.topics.flatMap((topic) => topic.skills);
+  const reviewedCount = skills.filter(hasReviewedLearning).length;
+
+  return (
+    <button
+      type="button"
+      className="student-learning-landscape-card"
+      onClick={onOpen}
+    >
+      <div className="student-learning-landscape-card-top">
+        <span className="student-learning-landscape-letter">
+          {strand.strand.trim().charAt(0).toUpperCase()}
+        </span>
+        {reviewedCount ? (
+          <span className="student-learning-reviewed-pill">
+            {reviewedCount} reviewed
+          </span>
+        ) : null}
       </div>
-    </section>
+
+      <div>
+        <h3>{strand.strand}</h3>
+        <p>
+          {strand.topics.length} {strand.topics.length === 1 ? "topic" : "topics"} ·{" "}
+          {skills.length} {skills.length === 1 ? "skill" : "skills"}
+        </p>
+      </div>
+
+      <div className="student-learning-landscape-card-footer">
+        <span>
+          {reviewedCount
+            ? `${reviewedCount} with reviewed learning`
+            : "Explore your programme"}
+        </span>
+        <b>Explore →</b>
+      </div>
+    </button>
   );
 }
 
 function OfferingLearning({ enrolment }) {
   const [selectedStrand, setSelectedStrand] = useState(null);
-
   const skills = enrolment.skills ?? [];
-
-  const hierarchy = useMemo(
-    () => buildHierarchy(skills),
-    [skills]
-  );
-
-  const progressSkills = skills.filter(
-    hasRecordedProgress
-  );
-
-  const progressCount = progressSkills.length;
+  const hierarchy = useMemo(() => buildHierarchy(skills), [skills]);
+  const reviewedCount = skills.filter(hasReviewedLearning).length;
 
   const selected = hierarchy.find(
     (strand) => strand.strand === selectedStrand
@@ -234,177 +260,92 @@ function OfferingLearning({ enrolment }) {
     );
   }
 
+  const levelLabel = (enrolment.curriculumLevels ?? [])
+    .map((level) => level.levelName || level.levelId)
+    .filter(Boolean)
+    .join(", ");
+
   return (
-    <>
-      <section className="portal-card student-learning-overview">
+    <div className="student-learning-landscape">
+      <section className="student-learning-programme-hero">
         <div>
-          <p className="portal-eyebrow">
+          <span className="student-learning-map-kicker">
             {enrolment.subjectName || "My Learning"}
-          </p>
-
-          <h2>
-            {enrolment.offeringName ||
-              enrolment.subjectName ||
-              "My Learning"}
-          </h2>
-
-          {enrolment.curriculumLevels?.length ? (
-            <p className="student-learning-level">
-              {enrolment.curriculumLevels
-                .map(
-                  (level) =>
-                    level.levelName ||
-                    level.level_name ||
-                    level.levelId
-                )
-                .filter(Boolean)
-                .join(", ")}
-            </p>
-          ) : null}
+          </span>
+          <h2>{enrolment.offeringName || enrolment.subjectName || "My Learning"}</h2>
+          {levelLabel ? <p>{levelLabel}</p> : null}
         </div>
 
-        <div className="student-learning-programme-summary">
+        <div className="student-learning-programme-stat">
           <strong>{skills.length}</strong>
-          <span>skills in your programme</span>
+          <span>skills in this learning programme</span>
         </div>
       </section>
 
-      {progressCount === 0 ? (
-        <section className="student-learning-message">
-          <strong>Your learning journey starts here.</strong>
-
-          <p>
-            Your progress will appear as you complete sessions
-            and learning activities.
-          </p>
-        </section>
-      ) : (
-        <section className="student-learning-message">
-          <strong>
-            You have progress recorded in {progressCount}{" "}
-            {progressCount === 1 ? "skill" : "skills"}.
-          </strong>
-
-          <p>
-            Keep working through your learning areas to build
-            your progress.
-          </p>
-
-          <details className="student-progress-details">
-            <summary>
-              View {progressCount}{" "}
-              {progressCount === 1 ? "skill" : "skills"}
-            </summary>
-
-            <ul className="student-progress-skill-list">
-              {progressSkills.map((skill, index) => (
-                <li
-                  key={
-                    skill.learningNodeId ||
-                    skill.learning_node_id ||
-                    `progress-skill-${index}`
-                  }
-                >
-                  {skillName(skill)}
-                </li>
-              ))}
-            </ul>
-          </details>
-        </section>
-      )}
-
-      <section>
-        <div className="student-learning-section-heading">
+      <section className="student-learning-map-explainer">
+        <div>
+          <span className="student-learning-reviewed-dot" />
           <div>
-            <p className="portal-eyebrow">Explore</p>
-            <h2>Choose a learning area</h2>
+            <strong>
+              {reviewedCount
+                ? `${reviewedCount} ${
+                    reviewedCount === 1 ? "skill has" : "skills have"
+                  } reviewed learning.`
+                : "Your learning map is ready."}
+            </strong>
+            <p>
+              Reviewed learning means approved evidence exists from your
+              sessions. Everything else remains neutral until there is evidence
+              to show.
+            </p>
           </div>
         </div>
 
-        <div className="student-strand-grid">
-          {hierarchy.map((strand) => {
-            const count = strand.topics.reduce(
-              (total, topic) =>
-                total + topic.skills.length,
-              0
-            );
+        {reviewedCount ? (
+          <Link to="/portal/student/pen-e">Open Pen-E &amp; Me →</Link>
+        ) : null}
+      </section>
 
-            const strandProgressCount = strand.topics
-              .flatMap((topic) => topic.skills)
-              .filter(hasRecordedProgress)
-              .length;
+      <section className="student-learning-map-section">
+        <div className="student-learning-map-heading">
+          <div>
+            <span className="student-learning-map-kicker">Your learning map</span>
+            <h2>Explore by learning area</h2>
+          </div>
+          <span>{hierarchy.length} learning areas</span>
+        </div>
 
-            return (
-              <button
-                type="button"
-                className="student-strand-card"
-                key={strand.strand}
-                onClick={() =>
-                  setSelectedStrand(strand.strand)
-                }
-              >
-                <div>
-                  <span className="student-strand-icon">
-                    {strand.strand
-                      .trim()
-                      .charAt(0)
-                      .toUpperCase()}
-                  </span>
-
-                  <h3>{strand.strand}</h3>
-
-                  <p>
-                    {strand.topics.length}{" "}
-                    {strand.topics.length === 1
-                      ? "topic"
-                      : "topics"}
-                  </p>
-                </div>
-
-                <div className="student-strand-card-footer">
-                  <span>
-                    {count}{" "}
-                    {count === 1 ? "skill" : "skills"}
-                  </span>
-
-                  <span>
-                    {strandProgressCount > 0
-                      ? `${strandProgressCount} started`
-                      : "Explore →"}
-                  </span>
-                </div>
-              </button>
-            );
-          })}
+        <div className="student-learning-landscape-grid">
+          {hierarchy.map((strand) => (
+            <StrandCard
+              key={strand.strand}
+              strand={strand}
+              onOpen={() => setSelectedStrand(strand.strand)}
+            />
+          ))}
         </div>
       </section>
-    </>
+    </div>
   );
 }
 
 export default function StudentLearningPage() {
   const { user } = useAuth();
-
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
     if (!user?.id) return;
-
     let cancelled = false;
+    setError("");
 
     fetchStudentLearning(user.id)
       .then((result) => {
-        if (!cancelled) {
-          setData(result);
-        }
+        if (!cancelled) setData(result);
       })
       .catch((err) => {
         if (!cancelled) {
-          setError(
-            err?.message ||
-              "Unable to load your learning."
-          );
+          setError(err?.message || "Unable to load your learning.");
         }
       });
 
@@ -413,37 +354,25 @@ export default function StudentLearningPage() {
     };
   }, [user?.id]);
 
-  if (error) {
-    return (
-      <div className="portal-alert">
-        {error}
-      </div>
-    );
-  }
-
-  if (!data) {
-    return (
-      <div className="portal-loading">
-        Loading your learning…
-      </div>
-    );
-  }
+  if (error) return <div className="portal-alert">{error}</div>;
+  if (!data) return <div className="portal-loading">Loading your learning…</div>;
 
   const enrolments = data.enrolments ?? [];
 
   return (
-    <>
-      <section className="portal-welcome">
-        <p className="portal-eyebrow">
-          My Learning
-        </p>
-
-        <h2>What are you learning?</h2>
-
+    <div className="student-learning-page-v1">
+      <section className="student-learning-page-hero">
+        <span className="student-learning-map-kicker">My Learning</span>
+        <h2>Your learning landscape.</h2>
         <p>
-          Explore your learning areas, open a topic and see the
-          skills you are building.
+          See the full picture of what you&apos;re learning and where your
+          reviewed sessions have already left evidence.
         </p>
+
+        <div className="student-learning-page-key">
+          <span><i className="reviewed" /> Reviewed learning</span>
+          <span><i className="programme" /> In your programme</span>
+        </div>
       </section>
 
       {enrolments.length ? (
@@ -454,16 +383,25 @@ export default function StudentLearningPage() {
           />
         ))
       ) : (
-        <section className="portal-card">
-          <h3>No active learning programme</h3>
-
+        <section className="student-learning-no-programme">
+          <strong>No active learning programme</strong>
           <p>
-            Your learning programme will appear here when an
-            active enrolment is available.
+            Your learning landscape will appear here when an active enrolment
+            is available.
           </p>
         </section>
       )}
-    </>
+
+      <footer className="student-learning-trust-note">
+        <strong>Your map is evidence-aware, not a scorecard.</strong>
+        <span>
+          A skill without reviewed evidence is not being labelled as weak,
+          incomplete, or not understood.
+        </span>
+      </footer>
+    </div>
   );
 }
+
+
 
