@@ -18,11 +18,11 @@ import {
 import {
   fetchPenEAnalysisRun,
   fetchPenETranscriptScope,
+  fetchPenETutorSkillResolver,
   reanalysePenETranscript,
   reviewPenESuggestion,
   linkPenEEvidenceSkill,
 } from "../../../lib/penEAnalysis";
-
 
 import "../../../styles/penESessionDetail.css";
 import "../../../styles/penE.css";
@@ -752,6 +752,10 @@ export default function PenESessionDetailPage() {
     setAnalysisScope,
   ] = useState(null);
 
+  const [
+    tutorSkillScope,
+    setTutorSkillScope,
+  ] = useState(null);
 
   const [
     selectedRunId,
@@ -790,6 +794,7 @@ export default function PenESessionDetailPage() {
         if (!runId) {
           setAnalysis(null);
           setAnalysisScope(null);
+          setTutorSkillScope(null);
           setSelectedRunId("");
           return;
         }
@@ -810,20 +815,37 @@ export default function PenESessionDetailPage() {
           );
 
           try {
-            const scope =
-              await fetchPenETranscriptScope(
+            const [
+              scope,
+              tutorScope,
+            ] = await Promise.all([
+              fetchPenETranscriptScope(
                 next.run
                   .intake_item_id
-              );
+              ),
+               fetchPenETutorSkillResolver(
+                 next.run
+                  .intake_item_id
+              ),
+            ]);
 
-            setAnalysisScope(
-              scope
-            );
-          } catch {
-            setAnalysisScope(
+             setAnalysisScope(
+               scope
+             );
+
+             setTutorSkillScope(
+              tutorScope
+             );
+              } catch {
+              setAnalysisScope(
+                 null
+             );
+
+             setTutorSkillScope(
               null
-            );
-          }
+             );
+           }
+
         } catch (err) {
           setError(
             err.message
@@ -862,6 +884,9 @@ export default function PenESessionDetailPage() {
           setAnalysis(null);
           setAnalysisScope(
             null
+          );
+          setTutorSkillScope(
+             null
           );
           setSelectedRunId("");
         }
@@ -1654,7 +1679,7 @@ export default function PenESessionDetailPage() {
                                 refreshAnalysis
                               }
                               skills={
-                                analysisScope?.candidates ??
+                                 tutorSkillScope?.skills ??
                                 []
                               }
                             />

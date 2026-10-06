@@ -184,6 +184,29 @@ export async function fetchPenETranscriptScope(
   return data ?? null;
 }
 
+export async function fetchPenETutorSkillResolver(
+  intakeItemId
+) {
+  if (!intakeItemId) {
+    return null;
+  }
+
+  const { data, error } =
+    await supabase.rpc(
+      "aeos_pen_e_tutor_skill_resolver",
+      {
+        target_intake_item_id:
+          intakeItemId,
+      }
+    );
+
+  if (error) {
+    throw error;
+  }
+
+  return data ?? null;
+}
+
 export async function fetchPenEAnalysisRun(
   analysisRunId
 ) {
